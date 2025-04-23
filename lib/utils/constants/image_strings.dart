@@ -15,4 +15,10 @@ class TImages {
   // -- Lottie Animations
 
   // -- OnBoarding Texts
+  static const String onBoarding1 =
+      'assets/images/on_boarding_images/undraw_progress-overview_wl8n.png';
+  static const String onBoarding2 =
+      'assets/images/on_boarding_images/undraw_happy-news_d5bt.png';
+  static const String onBoarding3 =
+      'assets/images/on_boarding_images/undraw_with-love_rs1k.png';
 }

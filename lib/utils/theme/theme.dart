@@ -1,3 +1,4 @@
+import 'package:moodiary/utils/constants/colors.dart';
 import 'package:moodiary/utils/theme/custom_themes/appbar_theme.dart';
 import 'package:moodiary/utils/theme/custom_themes/bottom_sheet_theme.dart';
 import 'package:moodiary/utils/theme/custom_themes/checkbox_theme.dart';
@@ -16,7 +17,7 @@ class TAppTheme {
     fontFamily: 'Quicksand',
     brightness: Brightness.light,
     primaryColor: Colors.blue,
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: TColors.light,
     textTheme: TTextTheme.lightTextTheme,
     elevatedButtonTheme: TElevatedButtonTheme.lightElevatedButtonTheme,
     appBarTheme: TAppBarTheme.lightAppBarTheme,
@@ -31,7 +32,7 @@ class TAppTheme {
     fontFamily: 'Quicksand',
     brightness: Brightness.dark,
     primaryColor: Colors.blue,
-    scaffoldBackgroundColor: Colors.black,
+    scaffoldBackgroundColor: TColors.dark,
     textTheme: TTextTheme.darkTextTheme,
     elevatedButtonTheme: TElevatedButtonTheme.darkElevatedButtonTheme,
     appBarTheme: TAppBarTheme.darkAppBarTheme,

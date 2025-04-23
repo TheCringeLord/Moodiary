@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class TColors {
   // App theme colors
-  static const Color primary = Color(0xFF4b68ff);
-  static const Color secondary = Color(0xFFFFE24B);
-  static const Color accent = Color(0xFFb0c7ff);
+  static const Color primary = Color.fromARGB(255, 153, 204, 255);
+  static const Color secondary = Color.fromARGB(255, 212, 234, 230);
+  static const Color accent = Color.fromARGB(255, 48, 134, 125);
 
   //Gradient Colors
   static const Gradient linearGradient = LinearGradient(
@@ -23,8 +23,8 @@ class TColors {
   static const Color textWhite = Colors.white;
 
   // Background colors
-  static const Color light = Color(0xFFF6F6F6);
-  static const Color dark = Color(0xFF272727);
+  static const Color light = Color.fromARGB(255, 245, 249, 255);
+  static const Color dark = Color.fromARGB(255, 18, 27, 37);
   static const Color primaryBackground = Color(0xFFF3F5FF);
 
   // Background Container colors
@@ -32,7 +32,7 @@ class TColors {
   static Color darkContainer = TColors.white.withOpacity(0.1);
 
   // Button colors
-  static const Color buttonPrimary = Color(0xFF4b68ff);
+  static const Color buttonPrimary = Color.fromARGB(255, 75, 147, 255);
   static const Color buttonSecondary = Color(0xFF6C757D);
   static const Color buttonDisabled = Color(0xFFC4C4C4);
 
@@ -41,7 +41,7 @@ class TColors {
   static const Color borderSecondary = Color(0xFFE6E6E6);
 
   // Error and validation colors
-  static const Color error = Color(0xFFD32F2F);
+  static const Color error = Color.fromARGB(255, 211, 47, 47);
   static const Color success = Color(0xFF388E3C);
   static const Color warning = Color(0xFFF57C00);
   static const Color info = Color(0xFF1976D2);
