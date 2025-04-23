@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:moodiary/app.dart';
 
 void main() {
-  runApp(const MainApp());
-}
+  ///TODO Add Widgets Binding
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  ///TODO Init Local Storage
 
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
-    );
-  }
+  ///TODO Await Native Splash
+
+  ///TODO Initialize Firebase and Authentication Repository
+
+  runApp(const App());
 }
