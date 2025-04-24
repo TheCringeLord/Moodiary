@@ -10,7 +10,12 @@ class TImages {
   static const String facebook = "assets/logos/facebook-icon.png";
   // -- Category Icons
 
-  // -- Brand Icons
+  // -- Mood Icons
+  static const String veryHappy = "assets/icons/mood/Very Happy.png";
+  static const String happy = "assets/icons/mood/Happy.png";
+  static const String neutral = "assets/icons/mood/Neutral.png";
+  static const String unHappy = "assets/icons/mood/Unhappy.png";
+  static const String sad = "assets/icons/mood/Very sad.png";
 
   // -- Animations
 

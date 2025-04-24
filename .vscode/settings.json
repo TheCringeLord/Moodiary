@@ -1,6 +1,6 @@
 {
   "cmake.ignoreCMakeListsMissing": true,
-  "cSpell.words": ["moodiary"],
+  "cSpell.words": ["moodiary", "Moodlog"],
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#ab307e",
     "activityBar.background": "#ab307e",

@@ -23,7 +23,7 @@ class TColors {
   static const Color textWhite = Colors.white;
 
   // Background colors
-  static const Color light = Color.fromARGB(255, 245, 249, 255);
+  static const Color light = Color.fromARGB(255, 237, 243, 252);
   static const Color dark = Color.fromARGB(255, 18, 27, 37);
   static const Color primaryBackground = Color(0xFFF3F5FF);
 

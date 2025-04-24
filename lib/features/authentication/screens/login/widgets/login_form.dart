@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+import 'package:moodiary/features/moodiary/screens/calendar/calendar.dart';
 import 'package:moodiary/utils/constants/sizes.dart';
 import 'package:moodiary/utils/constants/text_strings.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +75,7 @@ class TLoginForm extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () => Get.to(() => const CalendarScreen()),
                 child: Text(TTexts.signIn),
               ),
             ),
