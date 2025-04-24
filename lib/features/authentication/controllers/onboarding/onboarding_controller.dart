@@ -8,20 +8,6 @@ class OnboardingController extends GetxController {
   ///Variable
   final pageController = PageController();
   Rx<int> currentPageIndex = 0.obs;
-  final buttonText = 'Next'.obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    // Listen to page changes and keep currentPageIndex & buttonText in sync:
-    pageController.addListener(() {
-      final page = pageController.page?.round() ?? 0;
-      if (page != currentPageIndex.value) {
-        currentPageIndex.value = page;
-        _updateButtonText();
-      }
-    });
-  }
 
   ///Update Current Index when Page Scroll
   void updatePageIndicator(index) => currentPageIndex.value = index;
@@ -42,11 +28,6 @@ class OnboardingController extends GetxController {
       int page = currentPageIndex.value + 1;
       pageController.jumpToPage(page);
     }
-  }
-
-  void _updateButtonText() {
-    // 2) Change the RxString’s value
-    buttonText.value = (currentPageIndex.value == 2) ? 'Get Started' : 'Next';
   }
 
   ///Update Current Index & Jump to last Page

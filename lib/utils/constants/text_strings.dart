@@ -11,15 +11,15 @@ class TTexts {
   // -- OnBoarding Texts
   static const String onBoardingTitle1 =
       "Track Your Moods, Discover Your Patterns";
-  static const String onBoardingTitle2 = "Select Payment Method";
-  static const String onBoardingTitle3 = "Deliver at your door step";
+  static const String onBoardingTitle2 = "Express Yourself Freely";
+  static const String onBoardingTitle3 = "See Trends, Feel the Progress";
 
   static const String onBoardingSubTitle1 =
       "Gain insight into your emotions with just a few taps each day. Understand yourself better over time.";
   static const String onBoardingSubTitle2 =
-      "For Seamless Transactions, Choose Your Payment Path - Your Convenience, Our Priority!";
+      "Write about your day, add mood tags, and reflect on what matters. Your thoughts, safely stored and beautifully visualized.";
   static const String onBoardingSubTitle3 =
-      "From Our Doorstep to Yours - Swift, Secure, and Contactless Delivery!";
+      "Track mood changes over time. Identify what lifts you up — and what weighs you down.";
 
   // -- Authentication Forms
   static const String firstName = "First Name";

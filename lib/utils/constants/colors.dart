@@ -18,8 +18,8 @@ class TColors {
   );
 
   // Text colors
-  static const Color textPrimary = Color(0xFF333333);
-  static const Color textSecondary = Color(0xFF6C757D);
+  static const Color textPrimary = Color.fromARGB(255, 55, 71, 79);
+  static const Color textSecondary = Color.fromARGB(255, 120, 144, 156);
   static const Color textWhite = Colors.white;
 
   // Background colors

@@ -18,11 +18,11 @@ class OnboardingScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          ///* Horizontal Scrollable Page
+          ///* Horizontal Scrollable Pages
           PageView(
             controller: controller.pageController,
             onPageChanged: controller.updatePageIndicator,
-            children: [
+            children: const [
               OnBoardingPage(
                 image: TImages.onBoarding1,
                 title: TTexts.onBoardingTitle1,
@@ -30,25 +30,25 @@ class OnboardingScreen extends StatelessWidget {
               ),
               OnBoardingPage(
                 image: TImages.onBoarding2,
-                title: TTexts.onBoardingTitle1,
-                subTitle: TTexts.onBoardingSubTitle1,
+                title: TTexts.onBoardingTitle2,
+                subTitle: TTexts.onBoardingSubTitle2,
               ),
               OnBoardingPage(
                 image: TImages.onBoarding3,
-                title: TTexts.onBoardingTitle1,
-                subTitle: TTexts.onBoardingSubTitle1,
+                title: TTexts.onBoardingTitle3,
+                subTitle: TTexts.onBoardingSubTitle3,
               ),
             ],
           ),
 
           ///* Skip Button
-          const OnBoardingSkip(),
+          OnBoardingSkip(),
 
-          ///* Dot Navigation SmoothPageIndicator
-          const OnBoardingDotNavigator(),
+          ///* Dot Navigation
+          OnBoardingDotNavigator(),
 
-          ///* Circular Button
-          const OnBoardingNextButton(),
+          ///* Next Button
+          OnBoardingNextButton(),
         ],
       ),
     );
