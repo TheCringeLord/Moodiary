@@ -7,6 +7,7 @@ import 'package:moodiary/utils/constants/colors.dart';
 import 'package:moodiary/utils/constants/sizes.dart';
 import 'package:moodiary/utils/helpers/helper_functions.dart';
 
+import '../../../controllers/activity_customization_controller.dart';
 import '../../../controllers/calendar_controller.dart';
 
 /// A fully custom calendar UI built using TDateTile.
@@ -16,65 +17,68 @@ class TCustomCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CalendarController());
+    Get.put(ActivityCustomizationController());
 
-    return Obx(() {
-      final currentMonth = controller.currentMonth.value;
-      final daysInMonth =
-          DateTime(currentMonth.year, currentMonth.month + 1, 0).day;
-      final firstDayOfMonth =
-          DateTime(currentMonth.year, currentMonth.month, 1);
+    return Obx(
+      () {
+        final currentMonth = controller.currentMonth.value;
+        final daysInMonth =
+            DateTime(currentMonth.year, currentMonth.month + 1, 0).day;
+        final firstDayOfMonth =
+            DateTime(currentMonth.year, currentMonth.month, 1);
 
-      final startWeekday = firstDayOfMonth.weekday % 7;
+        final startWeekday = firstDayOfMonth.weekday % 7;
 
-      return Column(
-        children: [
-          _buildHeader(controller, currentMonth),
-          const SizedBox(height: TSizes.defaultSpace),
-          _buildWeekLabels(),
-          const SizedBox(height: TSizes.md),
-          Expanded(
-            child: GridView.builder(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero, // Remove grid padding
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7,
-                mainAxisSpacing: 0,
-                crossAxisSpacing: 0,
-                childAspectRatio: 0.7,
+        return Column(
+          children: [
+            _buildHeader(controller, currentMonth),
+            const SizedBox(height: TSizes.defaultSpace),
+            _buildWeekLabels(),
+            const SizedBox(height: TSizes.md),
+            Expanded(
+              child: GridView.builder(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero, // Remove grid padding
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7,
+                  mainAxisSpacing: 0,
+                  crossAxisSpacing: 0,
+                  childAspectRatio: 0.7,
+                ),
+
+                itemCount: 42,
+                itemBuilder: (context, index) {
+                  if (index < startWeekday ||
+                      index >= startWeekday + daysInMonth) {
+                    return const SizedBox();
+                  }
+
+                  final day = index - startWeekday + 1;
+                  final date =
+                      DateTime(currentMonth.year, currentMonth.month, day);
+
+                  return GestureDetector(
+                    onTap: () => controller.selectDate(date),
+                    child: Obx(
+                      () {
+                        final isToday = controller.isToday(date);
+                        final isSelected = controller.isSelected(date);
+                        return TDateTile(
+                          day: day,
+                          isToday: isToday,
+                          isSelected: isSelected,
+                          mood: controller.getMoodForDate(date),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
-
-              itemCount: 42,
-              itemBuilder: (context, index) {
-                if (index < startWeekday ||
-                    index >= startWeekday + daysInMonth) {
-                  return const SizedBox();
-                }
-
-                final day = index - startWeekday + 1;
-                final date =
-                    DateTime(currentMonth.year, currentMonth.month, day);
-
-                return GestureDetector(
-                  onTap: () => controller.selectDate(date),
-                  child: Obx(
-                    () {
-                      final isToday = controller.isToday(date);
-                      final isSelected = controller.isSelected(date);
-                      return TDateTile(
-                        day: day,
-                        isToday: isToday,
-                        isSelected: isSelected,
-                        mood: controller.getMoodForDate(date),
-                      );
-                    },
-                  ),
-                );
-              },
             ),
-          ),
-        ],
-      );
-    });
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildHeader(CalendarController controller, DateTime currentMonth) {

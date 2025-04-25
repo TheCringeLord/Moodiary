@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 
-
 class THelperFunctions {
   static Color? getColor(String value) {
     /// Define your product specific colors here and it will match the attribute colors and show specific 🟠🟡🟢🔵🟣🟤
@@ -46,8 +45,6 @@ class THelperFunctions {
       SnackBar(content: Text(message)),
     );
   }
-
- 
 
   static void showAlert(String title, String message) {
     showDialog(
@@ -100,6 +97,16 @@ class THelperFunctions {
 
   static String getFormattedDate(DateTime date,
       {String format = 'dd MMM yyyy'}) {
+    return DateFormat(format).format(date);
+  }
+
+  static String getFormattedDateDayMonthYear(DateTime date,
+      {String format = 'EEEE, MMMM yyyy'}) {
+    return DateFormat(format).format(date);
+  }
+
+  static String getFormattedDateDayDate(DateTime date,
+      {String format = 'd \nE'}) {
     return DateFormat(format).format(date);
   }
 

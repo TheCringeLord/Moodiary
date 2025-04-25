@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:moodiary/features/authentication/screens/onboarding/widgets/on_boarding_dot_navigator.dart';
 import 'package:moodiary/utils/constants/image_strings.dart';
 
+import '../../../../utils/constants/colors.dart';
 import '../../../../utils/constants/text_strings.dart';
+import '../../../../utils/helpers/helper_functions.dart';
 import '../../controllers/onboarding/onboarding_controller.dart';
 import 'widgets/on_boarding_next_button.dart';
 import 'widgets/on_boarding_page.dart';
@@ -15,7 +17,9 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(OnboardingController());
+    final dark = THelperFunctions.isDarkMode(context);
     return Scaffold(
+      backgroundColor: dark ? TColors.dark : TColors.white,
       body: Stack(
         children: [
           ///* Horizontal Scrollable Pages

@@ -4,6 +4,8 @@ import 'package:moodiary/utils/popups/loaders.dart';
 
 /// Controller for managing calendar logic and state.
 class CalendarController extends GetxController {
+  static CalendarController get instance => Get.find();
+
   /// Tracks the currently viewed month.
   final Rx<DateTime> currentMonth = DateTime.now().obs;
 
@@ -12,6 +14,10 @@ class CalendarController extends GetxController {
 
   /// The selected moods for each date.
   final RxMap<DateTime, String> selectedMoods = <DateTime, String>{}.obs;
+
+  /// Store both mood and activities
+  final RxMap<DateTime, Map<String, dynamic>> moodData =
+      <DateTime, Map<String, dynamic>>{}.obs;
 
   /// Go to previous month.
   void goToPreviousMonth() {
@@ -25,14 +31,35 @@ class CalendarController extends GetxController {
         DateTime(currentMonth.value.year, currentMonth.value.month + 1);
   }
 
-  void saveMood(DateTime date, String mood) {
-    // Store date without time component
+  void saveMood(DateTime date, String mood,
+      [Map<String, List<int>>? activities]) {
     final normalizedDate = DateTime(date.year, date.month, date.day);
-    selectedMoods[normalizedDate] = mood;
+
+    // Create a data structure to store mood and activities
+    final data = {
+      'mood': mood,
+      'activities': activities ?? <String, List<int>>{},
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+    };
+
+    moodData[normalizedDate] = data;
+    update();
   }
+
   String? getMoodForDate(DateTime date) {
     final normalizedDate = DateTime(date.year, date.month, date.day);
-    return selectedMoods[normalizedDate];
+    return moodData[normalizedDate]?['mood'] as String?;
+  }
+
+  Map<String, List<int>>? getActivitiesForDate(DateTime date) {
+    final normalizedDate = DateTime(date.year, date.month, date.day);
+    return moodData[normalizedDate]?['activities'] as Map<String, List<int>>?;
+  }
+
+  void deleteMood(DateTime date) {
+    final normalizedDate = DateTime(date.year, date.month, date.day);
+    moodData.remove(normalizedDate);
+    update();
   }
 
   /// Selects a day.

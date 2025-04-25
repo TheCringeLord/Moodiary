@@ -15,6 +15,8 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leadingIcon,
     this.actions,
     this.leadingOnPressed,
+    this.centerTitle = false,
+    this.bottom,
   });
 
   final Widget? title;
@@ -22,6 +24,8 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData? leadingIcon;
   final List<Widget>? actions;
   final VoidCallback? leadingOnPressed;
+  final bool centerTitle;
+  final PreferredSizeWidget? bottom;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +36,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       child: AppBar(
         automaticallyImplyLeading: false,
+        centerTitle: centerTitle,
         leading: showBackArrow
             ? IconButton(
                 onPressed: () => Get.back(),
@@ -42,14 +47,21 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
               )
             : leadingIcon != null
                 ? IconButton(
-                    onPressed: leadingOnPressed, icon: Icon(leadingIcon))
+                    onPressed: leadingOnPressed,
+                    icon: Icon(leadingIcon),
+                  )
                 : null,
         title: title,
         actions: actions,
+        bottom: bottom,
       ),
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(TDeviceUtils.getAppBarHeight());
+  Size get preferredSize {
+    // Calculate height based on whether we have a bottom widget
+    return Size.fromHeight(
+        TDeviceUtils.getAppBarHeight() + (bottom?.preferredSize.height ?? 0));
+  }
 }

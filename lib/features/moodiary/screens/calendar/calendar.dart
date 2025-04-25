@@ -10,16 +10,21 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: TAppBar(
-      //   title: Text("Calendar"),
-      // ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(TSizes.defaultSpace),
-          child: Column(
-            children: [
-              const Expanded(child: TCustomCalendar()),
-            ],
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(TSizes.defaultSpace),
+            child: Column(
+              children: [
+                // Calendar with fixed height instead of Expanded
+                const SizedBox(
+                  height: 630, // Adjust this value based on your needs
+                  child: TCustomCalendar(),
+                ),
+
+                const SizedBox(height: TSizes.spaceBtwSections),
+              ],
+            ),
           ),
         ),
       ),

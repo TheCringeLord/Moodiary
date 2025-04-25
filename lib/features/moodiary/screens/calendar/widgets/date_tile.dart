@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:moodiary/features/moodiary/models/mood_model.dart';
+
 import 'package:moodiary/utils/constants/colors.dart';
 import 'package:moodiary/utils/constants/sizes.dart';
 import 'package:moodiary/common/widgets/custom_shape/container/rounded_container.dart';
 import 'package:moodiary/utils/helpers/helper_functions.dart';
-
-import '../../../../../utils/constants/image_strings.dart';
 
 /// Custom tile widget for calendar day representation.
 class TDateTile extends StatelessWidget {
@@ -15,7 +14,7 @@ class TDateTile extends StatelessWidget {
     this.isToday = false,
     this.isSelected = false,
     this.color = TColors.primary,
-    this.size = 56,
+    this.size = 50,
     this.mood,
   });
   final int day;
@@ -27,35 +26,9 @@ class TDateTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dark = THelperFunctions.isDarkMode(context);
     final showCircleBorder = isToday;
-
-    // Determine circle background color based on mood
-    Color circleBg;
-    if (mood != null) {
-      // Map mood strings to colors
-      switch (mood) {
-        case 'veryHappy':
-          circleBg = const Color.fromARGB(255, 220, 241, 162);
-          break;
-        case 'happy':
-          circleBg = Colors.yellow.shade200;
-          break;
-        case 'neutral':
-          circleBg = const Color.fromARGB(255, 214, 193, 161);
-          break;
-        case 'unHappy':
-          circleBg = const Color.fromARGB(255, 240, 154, 105);
-          break;
-        case 'sad':
-          circleBg = const Color.fromARGB(255, 189, 183, 248);
-          break;
-        default:
-          circleBg = dark ? TColors.textPrimary : TColors.white;
-      }
-    } else {
-      circleBg = dark ? TColors.textPrimary : TColors.white;
-    }
+    final dark = THelperFunctions.isDarkMode(context);
+    final circleBg = Mood.getBackgroundColor(mood, dark);
 
     Color containerBg;
     Color textColor;
@@ -88,9 +61,9 @@ class TDateTile extends StatelessWidget {
             ),
             if (mood != null)
               Image.asset(
-                getMoodImage(mood!),
+                Mood.getMoodImage(mood!),
                 fit: BoxFit.cover,
-                width: size * 0.8,
+                width: size,
               ),
           ],
         ),
@@ -112,22 +85,5 @@ class TDateTile extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  String getMoodImage(String mood) {
-    switch (mood) {
-      case 'veryHappy':
-        return TImages.veryHappy;
-      case 'happy':
-        return TImages.happy;
-      case 'neutral':
-        return TImages.neutral;
-      case 'unHappy':
-        return TImages.unHappy;
-      case 'sad':
-        return TImages.sad;
-      default:
-        return TImages.neutral; // fallback image
-    }
   }
 }
