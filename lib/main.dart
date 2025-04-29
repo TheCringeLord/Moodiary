@@ -1,16 +1,26 @@
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+
 import 'package:moodiary/app.dart';
-import 'package:moodiary/features/moodiary/controllers/activity_customization_controller.dart';
 
-void main() {
-  ///TODO Add Widgets Binding
 
-  ///TODO Init Local Storage
+Future<void> main() async {
+  ///* Add Widgets Binding
+  // final WidgetsBinding widgetsBinding =
+  //     WidgetsFlutterBinding.ensureInitialized();
 
-  ///TODO Await Native Splash
+  ///*Init Local Storage
+  // await GetStorage.init();
 
-  ///TODO Initialize Firebase and Authentication Repository
-  Get.put(ActivityCustomizationController());
+  ///* Await Native Splash
+  //FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  ///* Initialize Firebase and Authentication Repository
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
+  //     .then(
+  //   (FirebaseApp value) => Get.put(AuthenticationRepository()),
+  // );
+ 
   runApp(const App());
 }

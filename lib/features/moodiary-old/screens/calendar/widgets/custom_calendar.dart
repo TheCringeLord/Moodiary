@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:moodiary/features/moodiary/screens/calendar/widgets/date_tile.dart';
+import 'package:moodiary/features/moodiary-old/screens/calendar/widgets/date_tile.dart';
 import 'package:moodiary/utils/constants/colors.dart';
 
 import 'package:moodiary/utils/constants/sizes.dart';

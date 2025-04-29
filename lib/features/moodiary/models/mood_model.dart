@@ -1,63 +1,219 @@
-import 'package:flutter/material.dart';
-import '../../../utils/constants/colors.dart';
-import '../../../utils/constants/image_strings.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Mood {
-  final String iconPath;
-  final String value;
-  final Color backgroundColor;
+class MoodModel {
+  final String id;
+  final DateTime date;
+  final String mainMood;
 
-  const Mood({
-    required this.iconPath,
-    required this.value,
-    required this.backgroundColor,
+  // Optional fields
+  final List<String>? emotions;
+  final List<String>? people;
+  final List<String>? weather;
+  final List<String>? hobbies;
+  final List<String>? work;
+  final List<String>? health;
+  final List<String>? chores;
+  final List<String>? relationship;
+  final List<String>? other;
+  final Map<String, List<String>>? customBlocks;
+  final int? sleepDuration;
+  final String? exercise;
+  final int? steps;
+  final int? menstruationDay;
+  final String? note;
+  final List<String>? photos;
+  final int? energyLevel;
+  final int? stressLevel;
+  final List<String>? tags;
+
+  ///* Constructor
+  MoodModel({
+    required this.id,
+    required this.date,
+    required this.mainMood,
+    this.emotions,
+    this.people,
+    this.weather,
+    this.hobbies,
+    this.work,
+    this.health,
+    this.chores,
+    this.relationship,
+    this.other,
+    this.customBlocks,
+    this.sleepDuration,
+    this.exercise,
+    this.steps,
+    this.menstruationDay,
+    this.note,
+    this.photos,
+    this.energyLevel,
+    this.stressLevel,
+    this.tags,
   });
 
-  static List<Mood> get defaultMoods => [
-        Mood(
-          iconPath: TImages.veryHappy,
-          value: 'Very Happy',
-          backgroundColor: const Color.fromARGB(255, 220, 241, 162),
-        ),
-        Mood(
-          iconPath: TImages.happy,
-          value: 'Happy',
-          backgroundColor: Colors.yellow.shade200,
-        ),
-        Mood(
-          iconPath: TImages.neutral,
-          value: 'Neutral',
-          backgroundColor: const Color.fromARGB(255, 214, 193, 161),
-        ),
-        Mood(
-          iconPath: TImages.unHappy,
-          value: 'Unhappy',
-          backgroundColor: const Color.fromARGB(255, 240, 154, 105),
-        ),
-        Mood(
-          iconPath: TImages.sad,
-          value: 'Very Sad',
-          backgroundColor: const Color.fromARGB(255, 189, 183, 248),
-        ),
-      ];
+  ///* Convert model to JSON
+  Map<String, dynamic> toMap() {
+    final data = {
+      'id': id,
+      'date': Timestamp.fromDate(date),
+      'mainMood': mainMood,
+      'emotions': emotions,
+      'people': people,
+      'weather': weather,
+      'hobbies': hobbies,
+      'work': work,
+      'health': health,
+      'chores': chores,
+      'relationship': relationship,
+      'other': other,
+      'customBlocks': customBlocks,
+      'sleepDuration': sleepDuration,
+      'exercise': exercise,
+      'steps': steps,
+      'menstruationDay': menstruationDay,
+      'note': note,
+      'photos': photos,
+      'energyLevel': energyLevel,
+      'stressLevel': stressLevel,
+      'tags': tags,
+    };
 
-  static Color getBackgroundColor(String? moodValue, bool isDark) {
-    if (moodValue == null) {
-      return isDark ? TColors.textPrimary : TColors.white;
-    }
+    // Remove fields that are null
+    data.removeWhere((key, value) => value == null);
 
-    final mood = defaultMoods.firstWhere(
-      (m) => m.value == moodValue,
-      orElse: () => defaultMoods[2], // Default to neutral
-    );
-    return mood.backgroundColor;
+    return data;
   }
 
-  static String getMoodImage(String moodValue) {
-    final mood = defaultMoods.firstWhere(
-      (m) => m.value == moodValue,
-      orElse: () => defaultMoods[2], // Default to neutral
+  ///* Create MoodModel from Map (Firebase snapshot)
+  factory MoodModel.fromMap(Map<String, dynamic> map) {
+    return MoodModel(
+      id: map['id'] ?? '',
+      date: (map['date'] as Timestamp).toDate(),
+      mainMood: map['mainMood'] ?? '',
+      emotions:
+          (map['emotions'] != null) ? List<String>.from(map['emotions']) : null,
+      people: (map['people'] != null) ? List<String>.from(map['people']) : null,
+      weather:
+          (map['weather'] != null) ? List<String>.from(map['weather']) : null,
+      hobbies:
+          (map['hobbies'] != null) ? List<String>.from(map['hobbies']) : null,
+      work: (map['work'] != null) ? List<String>.from(map['work']) : null,
+      health: (map['health'] != null) ? List<String>.from(map['health']) : null,
+      chores: (map['chores'] != null) ? List<String>.from(map['chores']) : null,
+      relationship: (map['relationship'] != null)
+          ? List<String>.from(map['relationship'])
+          : null,
+      other: (map['other'] != null) ? List<String>.from(map['other']) : null,
+      customBlocks: (map['customBlocks'] != null)
+          ? Map<String, List<String>>.from(
+              (map['customBlocks'] as Map).map(
+                (key, value) =>
+                    MapEntry(key.toString(), List<String>.from(value)),
+              ),
+            )
+          : null,
+      sleepDuration: map['sleepDuration'],
+      exercise: map['exercise'],
+      steps: map['steps'],
+      menstruationDay: map['menstruationDay'],
+      note: map['note'],
+      photos: (map['photos'] != null) ? List<String>.from(map['photos']) : null,
+      energyLevel: map['energyLevel'],
+      stressLevel: map['stressLevel'],
+      tags: (map['tags'] != null) ? List<String>.from(map['tags']) : null,
     );
-    return mood.iconPath;
+  }
+
+  ///* Create MoodModel from DocumentSnapshot (Firebase)
+  factory MoodModel.fromDocumentSnapshot(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+
+    return MoodModel.fromMap(data);
+  }
+
+  ///* Copy with method
+  MoodModel copyWith({
+    String? id,
+    DateTime? date,
+    String? mainMood,
+    List<String>? emotions,
+    List<String>? people,
+    List<String>? weather,
+    List<String>? hobbies,
+    List<String>? work,
+    List<String>? health,
+    List<String>? chores,
+    List<String>? relationship,
+    List<String>? other,
+    Map<String, List<String>>? customBlocks,
+    int? sleepDuration,
+    String? exercise,
+    int? steps,
+    int? menstruationDay,
+    String? note,
+    List<String>? photos,
+    int? energyLevel,
+    int? stressLevel,
+    List<String>? tags,
+  }) {
+    return MoodModel(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      mainMood: mainMood ?? this.mainMood,
+      emotions: emotions ?? this.emotions,
+      people: people ?? this.people,
+      weather: weather ?? this.weather,
+      hobbies: hobbies ?? this.hobbies,
+      work: work ?? this.work,
+      health: health ?? this.health,
+      chores: chores ?? this.chores,
+      relationship: relationship ?? this.relationship,
+      other: other ?? this.other,
+      customBlocks: customBlocks ?? this.customBlocks,
+      sleepDuration: sleepDuration ?? this.sleepDuration,
+      exercise: exercise ?? this.exercise,
+      steps: steps ?? this.steps,
+      menstruationDay: menstruationDay ?? this.menstruationDay,
+      note: note ?? this.note,
+      photos: photos ?? this.photos,
+      energyLevel: energyLevel ?? this.energyLevel,
+      stressLevel: stressLevel ?? this.stressLevel,
+      tags: tags ?? this.tags,
+    );
+  }
+  ///* Helper Functions
+  bool get hasEmotions => emotions != null && emotions!.isNotEmpty;
+  bool get hasActivities {
+    return (people != null && people!.isNotEmpty) ||
+        (weather != null && weather!.isNotEmpty) ||
+        (hobbies != null && hobbies!.isNotEmpty) ||
+        (work != null && work!.isNotEmpty) ||
+        (health != null && health!.isNotEmpty) ||
+        (chores != null && chores!.isNotEmpty) ||
+        (relationship != null && relationship!.isNotEmpty) ||
+        (other != null && other!.isNotEmpty) ||
+        (customBlocks != null && customBlocks!.isNotEmpty);
+  }
+
+  bool get hasNotes => note != null && note!.isNotEmpty;
+  bool get hasPhotos => photos != null && photos!.isNotEmpty;
+  int? get sleepHours => sleepDuration == null ? null : (sleepDuration! ~/ 60);
+
+  int get moodScore {
+    switch (mainMood) {
+      case "very_happy":
+        return 5;
+      case "happy":
+        return 4;
+      case "neutral":
+        return 3;
+      case "sad":
+        return 2;
+      case "very_sad":
+        return 1;
+      default:
+        return 3;
+    }
   }
 }

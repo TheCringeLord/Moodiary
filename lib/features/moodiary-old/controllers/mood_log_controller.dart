@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:moodiary/features/moodiary/screens/calendar/calendar.dart';
+import 'package:moodiary/features/moodiary-old/screens/calendar/calendar.dart';
 
 import '../../../utils/popups/loaders.dart';
 import '../models/mood_model.dart';

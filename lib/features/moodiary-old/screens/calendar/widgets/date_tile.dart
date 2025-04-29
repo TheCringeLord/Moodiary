@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moodiary/features/moodiary/models/mood_model.dart';
+import 'package:moodiary/features/moodiary-old/models/mood_model.dart';
 
 import 'package:moodiary/utils/constants/colors.dart';
 import 'package:moodiary/utils/constants/sizes.dart';
