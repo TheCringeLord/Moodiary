@@ -9,6 +9,9 @@ import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/helpers/helper_functions.dart';
 import '../../controllers/mood_controller.dart';
+import '../../models/recording_block_model.dart';
+import '../../models/recording_icon_mode.dart';
+import 'customize_recording_block.dart';
 
 class MoodlogScreen extends StatelessWidget {
   const MoodlogScreen({super.key, required this.selectedDate});
@@ -29,7 +32,8 @@ class MoodlogScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () =>
+                Get.to(() => const CustomizeRecordingBlockScreen()),
             icon: const Icon(Iconsax.setting_2),
           ),
         ],
@@ -40,72 +44,25 @@ class MoodlogScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(TSizes.defaultSpace),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ///* Main Mood Selection
-              TRoundedContainer(
-                padding: const EdgeInsets.all(TSizes.defaultSpace),
-                backgroundColor: THelperFunctions.isDarkMode(context)
-                    ? TColors.textPrimary
-                    : TColors.white,
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "How was your day?",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: TSizes.spaceBtwItems),
-
-                    ///* Main Mood Selection
-                    Obx(
-                      () => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          //* Main Mood
-                          TMoodIcon(
-                            imagePath: TImages.veryHappy,
-                            isSelected: moodController.selectedMainMood.value ==
-                                'veryHappy',
-                            onTap: () =>
-                                moodController.selectMainMood('veryHappy'),
-                          ),
-                          TMoodIcon(
-                            imagePath: TImages.happy,
-                            isSelected: moodController.selectedMainMood.value ==
-                                'happy',
-                            onTap: () => moodController.selectMainMood('happy'),
-                          ),
-                          TMoodIcon(
-                            imagePath: TImages.neutral,
-                            isSelected: moodController.selectedMainMood.value ==
-                                'neutral',
-                            onTap: () =>
-                                moodController.selectMainMood('neutral'),
-                          ),
-                          TMoodIcon(
-                            imagePath: TImages.unHappy,
-                            isSelected: moodController.selectedMainMood.value ==
-                                'unhappy',
-                            onTap: () =>
-                                moodController.selectMainMood('unhappy'),
-                          ),
-                          TMoodIcon(
-                            imagePath: TImages.sad,
-                            isSelected:
-                                moodController.selectedMainMood.value == 'sad',
-                            onTap: () => moodController.selectMainMood('sad'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              TMoodSelector(),
 
               const SizedBox(height: TSizes.spaceBtwSections),
 
-              ///TODO: Other Activities Block to be added here
+              ///* Recording Blocks
+              Obx(
+                () => Column(
+                  children: [
+                    for (final block
+                        in MoodController.instance.activeBlocks) ...[
+                      TRecordingBlock(block: block),
+                      const SizedBox(height: TSizes.spaceBtwSections),
+                    ],
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -118,6 +75,178 @@ class MoodlogScreen extends StatelessWidget {
           onPressed: () => moodController.saveMood(selectedDate),
           child: const Text("Done"),
         ),
+      ),
+    );
+  }
+}
+
+class TRecordingBlock extends StatelessWidget {
+  final RecordingBlockModel block;
+
+  const TRecordingBlock({
+    super.key,
+    required this.block,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
+    return TRoundedContainer(
+      backgroundColor: dark ? TColors.textPrimary : TColors.white,
+      padding: const EdgeInsets.all(TSizes.defaultSpace),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ///* Block title
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                block.displayName,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              IconButton(
+                onPressed: () {}, // optional collapse/expand or settings
+                icon: const Icon(Iconsax.arrow_down_1),
+              ),
+            ],
+          ),
+          const SizedBox(height: TSizes.spaceBtwItems),
+
+          ///* Icons
+          Wrap(
+            spacing: TSizes.spaceBtwItems,
+            runSpacing: TSizes.spaceBtwItems,
+            children: block.icons.map((icon) {
+              return TRecordingIcon(icon: icon, blockId: block.id);
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TRecordingIcon extends StatelessWidget {
+  final RecordingIconModel icon;
+  final String blockId;
+  final double size;
+
+  const TRecordingIcon({
+    super.key,
+    required this.icon,
+    required this.blockId,
+    this.size = 48,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final moodController = MoodController.instance;
+    final dark = THelperFunctions.isDarkMode(context);
+
+    return Obx(
+      () {
+        final isSelected = moodController.isIconSelected(blockId, icon.id);
+        return GestureDetector(
+          onTap: () => moodController.toggleIcon(blockId, icon.id),
+          child: Column(
+            children: [
+              TRoundedContainer(
+                width: size,
+                height: size,
+                radius: size / 2,
+                backgroundColor: isSelected ? TColors.primary : TColors.grey,
+                child: Icon(
+                  Iconsax.gallery,
+                  color: isSelected ? TColors.white : TColors.textPrimary,
+                  size: size / 2,
+                ),
+                // child: Image.asset(
+                //   icon.iconPath,
+                //   width: 30,
+                //   height: 30,
+                //   fit: BoxFit.contain,
+                // ),
+              ),
+              const SizedBox(height: TSizes.xs),
+              Text(
+                icon.label,
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                      color: isSelected
+                          ? TColors.primary
+                          : dark
+                              ? TColors.white
+                              : TColors.textPrimary,
+                    ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class TMoodSelector extends StatelessWidget {
+  const TMoodSelector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final moodController = MoodController.instance;
+    return TRoundedContainer(
+      padding: const EdgeInsets.all(TSizes.defaultSpace),
+      backgroundColor: THelperFunctions.isDarkMode(context)
+          ? TColors.textPrimary
+          : TColors.white,
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            "How was your day?",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: TSizes.spaceBtwItems),
+
+          ///* Main Mood Selection
+          Obx(
+            () => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                //* Main Mood
+                TMoodIcon(
+                  imagePath: TImages.veryHappy,
+                  isSelected:
+                      moodController.selectedMainMood.value == 'veryHappy',
+                  onTap: () => moodController.selectMainMood('veryHappy'),
+                ),
+                TMoodIcon(
+                  imagePath: TImages.happy,
+                  isSelected: moodController.selectedMainMood.value == 'happy',
+                  onTap: () => moodController.selectMainMood('happy'),
+                ),
+                TMoodIcon(
+                  imagePath: TImages.neutral,
+                  isSelected:
+                      moodController.selectedMainMood.value == 'neutral',
+                  onTap: () => moodController.selectMainMood('neutral'),
+                ),
+                TMoodIcon(
+                  imagePath: TImages.unHappy,
+                  isSelected:
+                      moodController.selectedMainMood.value == 'unhappy',
+                  onTap: () => moodController.selectMainMood('unhappy'),
+                ),
+                TMoodIcon(
+                  imagePath: TImages.sad,
+                  isSelected: moodController.selectedMainMood.value == 'sad',
+                  onTap: () => moodController.selectMainMood('sad'),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

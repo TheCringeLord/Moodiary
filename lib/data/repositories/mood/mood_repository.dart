@@ -16,7 +16,8 @@ class MoodRepository extends GetxController {
   bool useMock = true;
 
   String get _userId {
-    if (useMock) return "mock_user_123";
+    // Mock user ID for testing purposes (mock_user_123)
+    if (useMock) return "Test Account 1";
 
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {

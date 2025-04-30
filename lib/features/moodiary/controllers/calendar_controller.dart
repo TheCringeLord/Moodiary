@@ -163,11 +163,15 @@ class CalendarController extends GetxController {
     // 2) Check if a mood already exists
     final existingMood = await MoodRepository.instance.getMoodByDate(date);
     if (existingMood != null) {
-      TLoaders.successSnackBar(
-        title: "Main mood: ${existingMood.mainMood}",
-        message:
-            "You have already logged your mood for ${date.toIso8601String()}",
-      );
+      print("======================================");
+      print('✅ Mood already logged for ${date.toIso8601String()}');
+      print('📌 Main mood: ${existingMood.mainMood}');
+      print('📌 Emotions: ${existingMood.emotions}');
+      print('📌 People: ${existingMood.people}');
+      print('📌 Weather: ${existingMood.weather}');
+      print('📌 Custom Blocks: ${existingMood.customBlocks}');
+      print("======================================");
+      // Add more fields if needed
       return;
     }
 

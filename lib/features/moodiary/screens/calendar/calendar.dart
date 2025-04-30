@@ -15,9 +15,9 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(CalendarController());
-
+    final dark = THelperFunctions.isDarkMode(context);
     return Scaffold(
-      backgroundColor: TColors.light,
+      backgroundColor: dark ? TColors.dark : TColors.light,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
@@ -110,7 +110,7 @@ class TDateTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final calendarController = CalendarController.instance;
-
+    final dark = THelperFunctions.isDarkMode(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -126,7 +126,7 @@ class TDateTile extends StatelessWidget {
               radius: size / 2,
               showBorder: calendarController.isToday(dayNumber),
               borderColor: TColors.primary,
-              backgroundColor: TColors.white,
+              backgroundColor: dark ? TColors.textPrimary : TColors.white,
             ),
             if (moodIcon != null)
               Image.asset(
@@ -150,7 +150,11 @@ class TDateTile extends StatelessWidget {
               child: Text(
                 dayNumber.toString(),
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: isSelected ? TColors.white : TColors.textSecondary,
+                      color: isSelected
+                          ? TColors.white
+                          : dark
+                              ? TColors.grey
+                              : TColors.textSecondary,
                     ),
               ),
             ),
