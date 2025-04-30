@@ -13,8 +13,17 @@ class MoodRepository extends GetxController {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  /// Helper to get current user ID
-  String get _userId => FirebaseAuth.instance.currentUser!.uid;
+  bool useMock = true;
+
+  String get _userId {
+    if (useMock) return "mock_user_123";
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw "User not logged in";
+    }
+    return user.uid;
+  }
 
   ///* Add new mood
   Future<void> createMood(MoodModel mood) async {

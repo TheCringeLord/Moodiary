@@ -1,13 +1,38 @@
 import 'package:get/get.dart';
 
+import 'package:moodiary/utils/constants/image_strings.dart';
+
+import '../../../data/repositories/mood/mood_repository.dart';
+import '../../../utils/popups/loaders.dart';
+import '../models/mood_model.dart';
 import '../screens/moodlog/moodlog.dart';
+import 'dart:async';
 
 class CalendarController extends GetxController {
   static CalendarController get instance => Get.find();
 
   ///* Variables
   final Rx<DateTime> currentMonth = DateTime.now().obs;
-  final Rxn<int> selectedDay = Rxn<int>();
+  final Rxn<DateTime> selectedDate = Rxn<DateTime>();
+
+  final RxList<MoodModel> monthlyMoods = <MoodModel>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    // Load moods when controller starts
+    loadMoodsForCurrentMonth();
+
+    // Re-fetch moods whenever month changes
+    ever(currentMonth, (_) => loadMoodsForCurrentMonth());
+  }
+
+  @override
+  void onClose() {
+    _moodStream?.cancel();
+    super.onClose();
+  }
 
   ///* Move to previous month
   void goToPreviousMonth() {
@@ -79,9 +104,23 @@ class CalendarController extends GetxController {
         today.day == currentDate.day;
   }
 
+  bool isSelectedDay(int day) {
+    final sel = selectedDate.value;
+    if (sel == null) return false;
+    final cm = currentMonth.value;
+    return sel.year == cm.year && sel.month == cm.month && sel.day == day;
+  }
+
   ///* Check if a given day is selected
   void selectDay(int day) {
-    selectedDay.value = day;
+    final date = getDateFromDay(day);
+
+    if (date.isAfter(DateTime.now())) {
+      selectedDate.value = null;
+      return;
+    }
+
+    selectedDate.value = date;
   }
 
   ///* Jump to a specific month and year
@@ -105,12 +144,75 @@ class CalendarController extends GetxController {
   bool isValidDay(int day) => day > 0 && day <= daysInMonth;
 
   ///* Start mood logging for a specific day
-  void startMoodLogging(int dayNumber) {
-    //TODO: Add a check if already logged mood for the day display a mood card else go to mood log screen
-    selectDay(dayNumber);
+  void startMoodLogging(int dayNumber) async {
+    // compute the actual DateTime for this tile
+    final date = getDateFromDay(dayNumber);
 
-    final selectedDate = getDateFromDay(dayNumber);
+    // 1) Prevent logging future dates
+    if (date.isAfter(DateTime.now())) {
+      TLoaders.warningSnackBar(
+        title: "Oh no!",
+        message: "You cannot select future dates.",
+      );
+      return;
+    }
 
-    Get.to(() => MoodlogScreen(selectedDate: selectedDate));
+    // store the selection
+    selectedDate.value = date;
+
+    // 2) Check if a mood already exists
+    final existingMood = await MoodRepository.instance.getMoodByDate(date);
+    if (existingMood != null) {
+      TLoaders.successSnackBar(
+        title: "Main mood: ${existingMood.mainMood}",
+        message:
+            "You have already logged your mood for ${date.toIso8601String()}",
+      );
+      return;
+    }
+
+    // 3) No existing mood → navigate to log screen
+    Get.to(() => MoodlogScreen(selectedDate: date));
+  }
+
+  ///* Load moods for the current month
+  void loadMoodsForCurrentMonth() {
+    final month = currentMonth.value;
+
+    // Clear previous subscription
+    _moodStream?.cancel();
+
+    _moodStream = MoodRepository.instance
+        .getMoodsByMonth(month)
+        .listen((moods) => monthlyMoods.value = moods);
+  }
+
+  StreamSubscription? _moodStream;
+
+  ///* Get the mood for a specific day
+  String? getMoodEmojiForDay(int day) {
+    final date = getDateFromDay(day);
+
+    final mood = monthlyMoods.firstWhereOrNull(
+      (m) =>
+          m.date.year == date.year &&
+          m.date.month == date.month &&
+          m.date.day == date.day,
+    );
+
+    switch (mood?.mainMood) {
+      case 'veryHappy':
+        return TImages.veryHappy;
+      case 'happy':
+        return TImages.happy;
+      case 'neutral':
+        return TImages.neutral;
+      case 'unhappy':
+        return TImages.unHappy;
+      case 'sad':
+        return TImages.sad;
+      default:
+        return null;
+    }
   }
 }

@@ -8,7 +8,6 @@ import 'package:moodiary/utils/constants/sizes.dart';
 import '../../../../common/widgets/custom_shape/container/rounded_container.dart';
 import '../../../../utils/helpers/helper_functions.dart';
 import '../../controllers/calendar_controller.dart';
-import '../moodlog/moodlog.dart';
 
 class CalendarScreen extends StatelessWidget {
   const CalendarScreen({super.key});
@@ -59,8 +58,7 @@ class TCalendarGridView extends StatelessWidget {
 
       return GridView.builder(
         shrinkWrap: true,
-        physics:
-            const NeverScrollableScrollPhysics(), // Important inside Column
+        physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 7,
@@ -73,17 +71,19 @@ class TCalendarGridView extends StatelessWidget {
           if (index < startWeekday || index >= startWeekday + daysInMonth) {
             return const SizedBox();
           }
+
+          ///* Calculate the day number based on the index
           final dayNumber = index - startWeekday + 1;
 
           return GestureDetector(
             onTap: () {
-              // TODO: Add navigation to MoodLogScreen later here
               controller.startMoodLogging(dayNumber);
             },
             child: Obx(
               () => TDateTile(
                 dayNumber: dayNumber,
-                isSelected: controller.selectedDay.value == dayNumber,
+                isSelected: controller.isSelectedDay(dayNumber),
+                moodIcon: controller.getMoodEmojiForDay(dayNumber),
               ),
             ),
           );
@@ -99,11 +99,13 @@ class TDateTile extends StatelessWidget {
     this.size = 50,
     required this.dayNumber,
     required this.isSelected,
+    this.moodIcon,
   });
 
   final double size;
   final int dayNumber;
   final bool isSelected;
+  final String? moodIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -115,14 +117,25 @@ class TDateTile extends StatelessWidget {
       children: [
         ///* Circle with mood icon (if any)
 
-        //TODO: Add mood icon using Stack
-        TRoundedContainer(
-          width: size,
-          height: size,
-          radius: size / 2,
-          showBorder: calendarController.isToday(dayNumber),
-          borderColor: TColors.primary,
-          backgroundColor: TColors.white,
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            TRoundedContainer(
+              width: size,
+              height: size,
+              radius: size / 2,
+              showBorder: calendarController.isToday(dayNumber),
+              borderColor: TColors.primary,
+              backgroundColor: TColors.white,
+            ),
+            if (moodIcon != null)
+              Image.asset(
+                moodIcon!,
+                width: size,
+                height: size,
+                fit: BoxFit.cover,
+              ),
+          ],
         ),
 
         const SizedBox(height: TSizes.xs),

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../../../common/widgets/appbar/appbar.dart';
 import '../../../../common/widgets/custom_shape/container/rounded_container.dart';
 import '../../../../utils/constants/colors.dart';
+import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/helpers/helper_functions.dart';
+import '../../controllers/mood_controller.dart';
 
 class MoodlogScreen extends StatelessWidget {
   const MoodlogScreen({super.key, required this.selectedDate});
@@ -13,6 +16,8 @@ class MoodlogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final moodController = Get.put(MoodController());
+
     return Scaffold(
       appBar: TAppBar(
         title: Text(
@@ -53,16 +58,46 @@ class MoodlogScreen extends StatelessWidget {
                     const SizedBox(height: TSizes.spaceBtwItems),
 
                     ///* Main Mood Selection
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        //* Main Mood
-                        TMoodIcon(),
-                        TMoodIcon(),
-                        TMoodIcon(),
-                        TMoodIcon(),
-                        TMoodIcon(),
-                      ],
+                    Obx(
+                      () => Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          //* Main Mood
+                          TMoodIcon(
+                            imagePath: TImages.veryHappy,
+                            isSelected: moodController.selectedMainMood.value ==
+                                'veryHappy',
+                            onTap: () =>
+                                moodController.selectMainMood('veryHappy'),
+                          ),
+                          TMoodIcon(
+                            imagePath: TImages.happy,
+                            isSelected: moodController.selectedMainMood.value ==
+                                'happy',
+                            onTap: () => moodController.selectMainMood('happy'),
+                          ),
+                          TMoodIcon(
+                            imagePath: TImages.neutral,
+                            isSelected: moodController.selectedMainMood.value ==
+                                'neutral',
+                            onTap: () =>
+                                moodController.selectMainMood('neutral'),
+                          ),
+                          TMoodIcon(
+                            imagePath: TImages.unHappy,
+                            isSelected: moodController.selectedMainMood.value ==
+                                'unhappy',
+                            onTap: () =>
+                                moodController.selectMainMood('unhappy'),
+                          ),
+                          TMoodIcon(
+                            imagePath: TImages.sad,
+                            isSelected:
+                                moodController.selectedMainMood.value == 'sad',
+                            onTap: () => moodController.selectMainMood('sad'),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -75,28 +110,62 @@ class MoodlogScreen extends StatelessWidget {
           ),
         ),
       ),
+
+      ///* Done Button Click to save mood log
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        child: ElevatedButton(
+          onPressed: () => moodController.saveMood(selectedDate),
+          child: const Text("Done"),
+        ),
+      ),
     );
   }
 }
 
 class TMoodIcon extends StatelessWidget {
+  final String imagePath;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final double size;
+
   const TMoodIcon({
     super.key,
+    required this.imagePath,
+    required this.onTap,
+    this.isSelected = false,
+    this.size = 50,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: onTap,
       child: Stack(
         alignment: Alignment.center,
         children: [
           TRoundedContainer(
-            width: 50,
-            height: 50,
-            radius: 50 / 2,
-            showBorder: true,
-            backgroundColor: Colors.transparent,
+            width: size,
+            height: size,
+            radius: size / 2,
+            showBorder: isSelected,
+            backgroundColor: isSelected
+                ? Theme.of(context).primaryColor
+                : Colors.transparent,
+          ),
+          ClipOval(
+            child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                isSelected ? Colors.transparent : Colors.grey,
+                BlendMode.saturation,
+              ),
+              child: Image.asset(
+                imagePath,
+                width: size,
+                height: size,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ],
       ),

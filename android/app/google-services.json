@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "170774106521",
+    "project_id": "moodiary-89b7b",
+    "storage_bucket": "moodiary-89b7b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170774106521:android:6f42d46a1bb6cc3db60308",
+        "android_client_info": {
+          "package_name": "com.example.e_commerce"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9W10RzrU67eHmrZp7hC04zCCESq6WDqA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170774106521:android:0413700ecd30a59fb60308",
+        "android_client_info": {
+          "package_name": "com.example.moodiary"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9W10RzrU67eHmrZp7hC04zCCESq6WDqA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
