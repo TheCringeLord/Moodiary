@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-
 class THelperFunctions {
   static Color? getColor(String value) {
     /// Define your product specific colors here and it will match the attribute colors and show specific 🟠🟡🟢🔵🟣🟤
@@ -101,7 +100,7 @@ class THelperFunctions {
   }
 
   static String getFormattedDateDayMonthYear(DateTime date,
-      {String format = 'EEEE, MMMM yyyy'}) {
+      {String format = 'EEEE d, MMMM yyyy'}) {
     return DateFormat(format).format(date);
   }
 

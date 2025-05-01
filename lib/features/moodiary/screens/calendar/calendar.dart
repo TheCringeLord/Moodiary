@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-
+import 'package:moodiary/common/widgets/appbar/appbar.dart';
 import 'package:moodiary/data/repositories/authentication/authentication_repository.dart';
 import 'package:moodiary/utils/constants/colors.dart';
 
@@ -16,7 +16,10 @@ class CalendarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     Get.put(CalendarController());
+    
+   
     final dark = THelperFunctions.isDarkMode(context);
     final controller = AuthenticationRepository.instance;
     return Scaffold(
@@ -39,6 +42,9 @@ class CalendarScreen extends StatelessWidget {
 
                 ///* Calendar Grid
                 TCalendarGridView(),
+
+
+                ///* Mood Cards To Show info
               ],
             ),
           ),

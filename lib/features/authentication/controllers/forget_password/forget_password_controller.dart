@@ -22,7 +22,7 @@ class ForgetPasswordController extends GetxController {
   ///* Send Password Reset Email
   sendPasswordResetEmail() async {
     try {
-      // Strart Loading
+      // Start Loading
       TFullScreenLoader.openLoadingDialog(
           "Sending password reset email...", TImages.docerAnimation);
 

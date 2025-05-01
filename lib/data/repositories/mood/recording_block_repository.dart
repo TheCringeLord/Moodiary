@@ -155,6 +155,23 @@ class RecordingBlockRepository extends GetxController {
   List<RecordingBlockModel> _generateDefaultBlocks() {
     final String iconPlaceholder = TImages.google;
     return [
+      ///* Special blocks
+      RecordingBlockModel(
+        id: 'sleep',
+        displayName: 'Sleep',
+        isSpecial: true,
+        isHidden: false,
+        icons: [],
+      ),
+      RecordingBlockModel(
+        id: 'notes',
+        displayName: 'Today\'s Notes',
+        isSpecial: true,
+        isHidden: false,
+        icons: [],
+      ),
+
+      ///* Regular blocks
       RecordingBlockModel(
         id: 'emotions',
         displayName: 'Emotions',
@@ -300,29 +317,7 @@ class RecordingBlockRepository extends GetxController {
         isCustom: false,
         isHidden: false,
       ),
-      RecordingBlockModel(
-        id: 'sleep',
-        displayName: 'Sleep',
-        icons: [
-          RecordingIconModel(
-              id: 'well_rest',
-              label: 'Well Rested',
-              iconPath: iconPlaceholder,
-              isCustom: false),
-          RecordingIconModel(
-              id: 'bad_sleep',
-              label: 'Bad Sleep',
-              iconPath: iconPlaceholder,
-              isCustom: false),
-          RecordingIconModel(
-              id: 'nap',
-              label: 'Nap',
-              iconPath: iconPlaceholder,
-              isCustom: false),
-        ],
-        isCustom: false,
-        isHidden: false,
-      ),
+
       RecordingBlockModel(
         id: 'productivity',
         displayName: 'Productivity',

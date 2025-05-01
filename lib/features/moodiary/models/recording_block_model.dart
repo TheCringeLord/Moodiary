@@ -6,13 +6,15 @@ class RecordingBlockModel {
   String displayName; // User-facing name, editable
   List<RecordingIconModel> icons; // List of icons in this block
   bool isCustom; // If this is a user-created block
-bool isHidden;
+  final bool isSpecial;
+  bool isHidden;
   RecordingBlockModel({
     required this.id,
     required this.displayName,
     required this.icons,
     this.isCustom = false,
     this.isHidden = false,
+    this.isSpecial = false,
   });
 
   ///* Convert model to Firestore-compatible map
@@ -23,6 +25,7 @@ bool isHidden;
       'icons': icons.map((e) => e.toMap()).toList(),
       'isCustom': isCustom,
       'isHidden': isHidden,
+      'isSpecial': isSpecial,
     };
   }
 
@@ -36,6 +39,7 @@ bool isHidden;
           .toList(),
       isCustom: map['isCustom'] ?? false,
       isHidden: map['isHidden'] ?? false,
+      isSpecial: map['isSpecial'] ?? false,
     );
   }
 
@@ -44,12 +48,16 @@ bool isHidden;
     String? displayName,
     List<RecordingIconModel>? icons,
     bool? isCustom,
+    bool? isHidden,
+    bool? isSpecial,
   }) {
     return RecordingBlockModel(
       id: id,
       displayName: displayName ?? this.displayName,
       icons: icons ?? this.icons,
       isCustom: isCustom ?? this.isCustom,
+      isHidden: isHidden ?? this.isHidden,
+      isSpecial: isSpecial ?? this.isSpecial,
     );
   }
 

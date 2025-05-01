@@ -163,21 +163,34 @@ class CalendarController extends GetxController {
 
     // 2) Check if a mood already exists
     final existingMood = await MoodRepository.instance.getMoodByDate(date);
+
+    ///TODO: Will add a Card to show the existing mood in the calendar screen
     if (existingMood != null) {
-      print("======================================");
-      print(
-          '✅ Mood already logged for ${THelperFunctions.getFormattedDate(date)}');
-      print('📌 Main mood: ${existingMood.mainMood}');
-      print('📌 Emotions: ${existingMood.emotions}');
-      print('📌 People: ${existingMood.people}');
-      print('📌 Weather: ${existingMood.weather}');
-      print('📌 Hobbies: ${existingMood.hobbies}');
-      print('📌 Work: ${existingMood.work}');
-      print('📌 Health: ${existingMood.health}');
-      print('📌 Chores: ${existingMood.chores}');
-      print('📌 Relationship: ${existingMood.relationship}');
-      print('📌 Other: ${existingMood.other}');
-      print("======================================");
+      // print("======================================");
+      // print(
+      //     '✅ Mood already logged for ${THelperFunctions.getFormattedDate(date)}');
+      // print('📌 Main mood: ${existingMood.mainMood}');
+      // print('📌 Emotions: ${existingMood.emotions}');
+      // print('📌 People: ${existingMood.people}');
+      // print('📌 Weather: ${existingMood.weather}');
+      // print('📌 Hobbies: ${existingMood.hobbies}');
+      // print('📌 Work: ${existingMood.work}');
+      // print('📌 Health: ${existingMood.health}');
+      // print('📌 Chores: ${existingMood.chores}');
+      // print('📌 Relationship: ${existingMood.relationship}');
+      // print('📌 Other: ${existingMood.other}');
+
+      // // 🔁 Custom blocks
+      // if (existingMood.customBlocks != null &&
+      //     existingMood.customBlocks!.isNotEmpty) {
+      //   print('🔧 Custom Blocks:');
+      //   existingMood.customBlocks!.forEach((blockId, iconIds) {
+      //     print('• $blockId: ${iconIds.join(', ')}');
+      //   });
+      // }
+
+      // print("======================================");
+
       return;
     }
 
@@ -187,6 +200,8 @@ class CalendarController extends GetxController {
 
   ///* Load moods for the current month
   void loadMoodsForCurrentMonth() {
+    print("================MOOD LOADING======================");
+    print("Loading moods for ${currentMonth.value}");
     final month = currentMonth.value;
 
     // Clear previous subscription
@@ -195,6 +210,8 @@ class CalendarController extends GetxController {
     _moodStream = MoodRepository.instance
         .getMoodsByMonth(month)
         .listen((moods) => monthlyMoods.value = moods);
+    print("Loading moods for ${currentMonth.value} Successful");
+    print("================MOOD LOADING Successful======================");
   }
 
   StreamSubscription? _moodStream;

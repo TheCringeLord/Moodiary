@@ -1,8 +1,6 @@
 import 'package:moodiary/features/authentication/screens/login/login.dart';
 import 'package:moodiary/features/authentication/screens/onboarding/onboarding.dart';
 
-import 'package:moodiary/features/moodiary/screens/calendar/calendar.dart';
-
 import 'package:moodiary/utils/exceptions/firebase_auth_exceptions.dart';
 import 'package:moodiary/utils/exceptions/format_exceptions.dart';
 import 'package:moodiary/utils/exceptions/platform_exceptions.dart';
@@ -15,6 +13,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../features/authentication/screens/signup/verify_email.dart';
+import '../../../navigation_menu.dart';
 import '../mood/recording_block_repository.dart';
 
 class AuthenticationRepository extends GetxController {
@@ -44,7 +43,7 @@ class AuthenticationRepository extends GetxController {
       //If the user is logged in
       if (user.emailVerified) {
         //If the user's email is verified, navigate to the home screen
-        Get.offAll(() => const CalendarScreen());
+        Get.offAll(() => const NavigationMenu());
       } else {
         //If the user's email is not verified, navigate to the verify email screen
         Get.offAll(() => VerifyEmailScreen(email: _auth.currentUser?.email));

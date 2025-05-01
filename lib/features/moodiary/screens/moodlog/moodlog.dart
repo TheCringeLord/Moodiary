@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:moodiary/features/moodiary/screens/moodlog/widgets/sleep_picker_dialog.dart';
 
 import '../../../../common/widgets/appbar/appbar.dart';
 import '../../../../common/widgets/custom_shape/container/rounded_container.dart';
@@ -8,6 +9,8 @@ import '../../../../utils/constants/colors.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/helpers/helper_functions.dart';
+
+import '../../../../utils/validators/validation.dart';
 import '../../controllers/mood_controller.dart';
 import '../../controllers/recording_block_controller.dart';
 import '../../models/recording_block_model.dart';
@@ -22,7 +25,7 @@ class MoodlogScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final moodController = Get.put(MoodController());
     Get.put(RecordingBlockController());
-    // 👇 Add this block
+
     if (moodController.recordingBlocks.isEmpty) {
       moodController.loadBlocks();
     }
@@ -57,17 +60,31 @@ class MoodlogScreen extends StatelessWidget {
               const SizedBox(height: TSizes.spaceBtwSections),
 
               ///* Recording Blocks
-              Obx(
-                () => Column(
+              Obx(() {
+                final blocks = MoodController.instance.activeBlocks;
+
+                final normalBlocks = blocks.where((b) => !b.isSpecial).toList();
+                final specialBlocks = blocks.where((b) => b.isSpecial).toList();
+
+                return Column(
                   children: [
-                    for (final block
-                        in MoodController.instance.activeBlocks) ...[
+                    ///* 🔹 Normal blocks first
+                    for (final block in normalBlocks) ...[
                       TRecordingBlock(block: block),
                       const SizedBox(height: TSizes.spaceBtwSections),
                     ],
+
+                    ///*  🔸 Then special blocks
+                    for (final block in specialBlocks) ...[
+                      if (block.id == 'sleep')
+                        TSleepBlock()
+                      else if (block.id == 'notes')
+                        TNotesBlock(),
+                      const SizedBox(height: TSizes.spaceBtwSections),
+                    ],
                   ],
-                ),
-              ),
+                );
+              }),
             ],
           ),
         ),
@@ -80,6 +97,130 @@ class MoodlogScreen extends StatelessWidget {
           onPressed: () => moodController.saveMood(selectedDate),
           child: const Text("Done"),
         ),
+      ),
+    );
+  }
+}
+
+class TNotesBlock extends StatelessWidget {
+  const TNotesBlock({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
+
+    return TRoundedContainer(
+      backgroundColor: dark ? TColors.textPrimary : TColors.white,
+      padding: const EdgeInsets.all(TSizes.defaultSpace),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ///* Block title
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Today's Notes",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ],
+          ),
+          const SizedBox(height: TSizes.spaceBtwItems),
+
+          ///* Text field for notes
+          Form(
+            key: MoodController.instance.notesFormKey,
+            child: TextFormField(
+              controller: MoodController.instance.notes,
+              validator: (value) =>
+                  TValidator.validateEmptyText("Notes", value),
+              decoration: const InputDecoration(
+                labelText: "Enter your notes here...",
+                suffixIcon: Icon(Iconsax.note_1),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TSleepBlock extends StatelessWidget {
+  const TSleepBlock({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
+    final controller = MoodController.instance;
+    return TRoundedContainer(
+      backgroundColor: dark ? TColors.textPrimary : TColors.white,
+      padding: const EdgeInsets.all(TSizes.defaultSpace),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ///* Block title
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Sleep",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ],
+          ),
+          const SizedBox(height: TSizes.spaceBtwItems),
+
+          ///* Record Sleep Hours
+          Obx(() {
+            final start = controller.sleepStart.value;
+            final end = controller.sleepEnd.value;
+            final hasSaved = controller.sleepDurationInMinutes > 0;
+            final label = hasSaved
+                ? '${start.format(context)} ~ ${end.format(context)}'
+                : 'Record Sleep Hours';
+
+            return SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  builder: (_) => const TSleepPickerDialog(),
+                ),
+                icon: Icon(
+                  Iconsax.moon,
+                  color: THelperFunctions.isDarkMode(context)
+                      ? TColors.light
+                      : TColors.darkGrey,
+                ),
+                label: Text(
+                  label,
+                  style: Theme.of(context).textTheme.titleMedium!.apply(
+                      color: THelperFunctions.isDarkMode(context)
+                          ? TColors.light
+                          : TColors.darkGrey),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: THelperFunctions.isDarkMode(context)
+                      ? TColors.textSecondary
+                      : TColors.lightContainer,
+                  side: BorderSide(
+                    color: THelperFunctions.isDarkMode(context)
+                        ? TColors.light
+                        : TColors.grey,
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
       ),
     );
   }
@@ -113,7 +254,10 @@ class TRecordingBlock extends StatelessWidget {
               ),
               IconButton(
                 onPressed: () {}, // optional collapse/expand or settings
-                icon: const Icon(Iconsax.arrow_down_1),
+                icon: const Icon(
+                  Iconsax.arrow_down_1,
+                  size: TSizes.iconSm,
+                ),
               ),
             ],
           ),

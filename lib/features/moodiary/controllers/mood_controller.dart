@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:moodiary/features/moodiary/controllers/calendar_controller.dart';
 import 'package:moodiary/features/moodiary/controllers/recording_block_controller.dart';
 
-import 'package:moodiary/features/moodiary/screens/calendar/calendar.dart';
+import 'package:moodiary/navigation_menu.dart';
 import '../../../data/repositories/mood/mood_repository.dart';
 
 import '../../../utils/constants/image_strings.dart';
@@ -14,6 +16,7 @@ import '../models/recording_block_model.dart';
 class MoodController extends GetxController {
   static MoodController get instance => Get.find();
 
+  ///*! -------------Variables-------------------!*///
   ///* Selected main mood (emoji key)
   final RxString selectedMainMood = ''.obs;
 
@@ -25,24 +28,53 @@ class MoodController extends GetxController {
   final RxMap<String, RxList<String>> selectedIconsPerBlock =
       <String, RxList<String>>{}.obs;
 
+  ///* Stores notes for the mood log
+  final notes = TextEditingController();
+  GlobalKey<FormState> notesFormKey = GlobalKey<FormState>();
+
+  ///* Variables for sleep start and end times
+  final Rx<TimeOfDay> sleepStart = TimeOfDay(hour: 23, minute: 0).obs;
+  final Rx<TimeOfDay> sleepEnd = TimeOfDay(hour: 7, minute: 0).obs;
+  final RxBool isSleepSaved = false.obs;
+
+  ///*! -------------End-Variables-------------------!*///
+
+  ///* Stores selected icons for custom blocks (e.g. {'custom1': ['icon1', 'icon2']})
   List<RecordingBlockModel> get activeBlocks =>
       recordingBlocks.where((block) => !block.isHidden).toList();
+
+  ///* Get Sleep Duration in minutes
+  int get sleepDurationInMinutes {
+    if (!isSleepSaved.value) return 0;
+
+    final start =
+        DateTime(2000, 1, 1, sleepStart.value.hour, sleepStart.value.minute);
+    final end = DateTime(
+        2000,
+        1,
+        sleepEnd.value.hour < sleepStart.value.hour ? 2 : 1,
+        sleepEnd.value.hour,
+        sleepEnd.value.minute);
+    return end.difference(start).inMinutes;
+  }
 
   ///* Select the main mood emoji
   void selectMainMood(String moodKey) {
     selectedMainMood.value = moodKey;
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    // loadDefaultBlocks();
-  }
-
   ///* Clear all selections (called after saving)
   void clear() {
     selectedMainMood.value = '';
     selectedIconsPerBlock.clear();
+
+    // 🧼 Reset sleep
+    sleepStart.value = TimeOfDay(hour: 22, minute: 0);
+    sleepEnd.value = TimeOfDay(hour: 6, minute: 0);
+    isSleepSaved.value = false;
+
+    // 🧼 Reset notes
+    notes.clear();
   }
 
   ///* Save the mood log to Firestore
@@ -83,9 +115,16 @@ class MoodController extends GetxController {
         relationship: getSelectedIcons("relationship"),
         other: getSelectedIcons("other"),
         customBlocks: getCustomBlocksMap(),
-        sleepDuration: 0,
+        note: notes.text,
+        sleepDuration: sleepDurationInMinutes,
         photos: [],
       );
+
+      print("==========================");
+      print("Mood ID: ${mood.id}");
+      print("Main Mood: ${mood.mainMood}");
+      print("Sleep Duration: ${mood.sleepDuration} minutes");
+      print("==========================");
 
       // Save to Firestore
       await MoodRepository.instance.createMood(mood);
@@ -93,9 +132,10 @@ class MoodController extends GetxController {
       // Cleanup
       clear();
       TFullScreenLoader.stopLoading();
-
+      // ✅ Trigger Calendar to reload moods
+      CalendarController.instance.loadMoodsForCurrentMonth();
       // Navigate to calendar
-      Get.offAll(() => const CalendarScreen());
+      Get.offAll(() => const NavigationMenu());
 
       // Show success
       TLoaders.successSnackBar(
