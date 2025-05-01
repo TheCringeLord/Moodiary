@@ -14,6 +14,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../features/authentication/screens/signup/verify_email.dart';
+import '../mood/recording_block_repository.dart';
+
 class AuthenticationRepository extends GetxController {
   static AuthenticationRepository get instance => Get.find();
 
@@ -38,7 +41,14 @@ class AuthenticationRepository extends GetxController {
     final user = _auth.currentUser;
 
     if (user != null) {
-      Get.offAll(() => const CalendarScreen());
+      //If the user is logged in
+      if (user.emailVerified) {
+        //If the user's email is verified, navigate to the home screen
+        Get.offAll(() => const CalendarScreen());
+      } else {
+        //If the user's email is not verified, navigate to the verify email screen
+        Get.offAll(() => VerifyEmailScreen(email: _auth.currentUser?.email));
+      }
     } else {
       //Local Storage
       deviceStorage.writeIfNull('isFirstTime', true);
@@ -78,10 +88,15 @@ class AuthenticationRepository extends GetxController {
   Future<UserCredential> registerWithEmailAndPassword(
       String email, String password) async {
     try {
-      return await _auth.createUserWithEmailAndPassword(
+      final userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      // ✅ Create default blocks for new user
+      if (userCredential.user != null) {
+        await RecordingBlockRepository.instance.createDefaultBlocks();
+      }
+      return userCredential;
     } on FirebaseAuthException catch (e) {
       throw TFirebaseAuthException(e.code).message;
     } on FirebaseException catch (e) {

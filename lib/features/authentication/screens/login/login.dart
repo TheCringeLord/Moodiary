@@ -27,17 +27,17 @@ class LoginScreen extends StatelessWidget {
           padding: TSpacingStyle.paddingWithAppBarHeight,
           child: Column(
             children: [
-              ///Logo, Title & Sub-Title
+              ///* Logo, Title & Sub-Title
               const TLoginHeader(),
 
-              ///Form
+              ///* Form
               const TLoginForm(),
 
-              ///Divider
+              ///* Divider
               TFormDivider(dividerText: "OR"),
               const SizedBox(height: TSizes.spaceBtwSections),
 
-              ///Footer
+              ///* Footer
               const TSocialButtons(),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import 'package:moodiary/utils/constants/image_strings.dart';
+import 'package:moodiary/utils/helpers/helper_functions.dart';
 
 import '../../../data/repositories/mood/mood_repository.dart';
 import '../../../utils/popups/loaders.dart';
@@ -164,14 +165,19 @@ class CalendarController extends GetxController {
     final existingMood = await MoodRepository.instance.getMoodByDate(date);
     if (existingMood != null) {
       print("======================================");
-      print('✅ Mood already logged for ${date.toIso8601String()}');
+      print(
+          '✅ Mood already logged for ${THelperFunctions.getFormattedDate(date)}');
       print('📌 Main mood: ${existingMood.mainMood}');
       print('📌 Emotions: ${existingMood.emotions}');
       print('📌 People: ${existingMood.people}');
       print('📌 Weather: ${existingMood.weather}');
-      print('📌 Custom Blocks: ${existingMood.customBlocks}');
+      print('📌 Hobbies: ${existingMood.hobbies}');
+      print('📌 Work: ${existingMood.work}');
+      print('📌 Health: ${existingMood.health}');
+      print('📌 Chores: ${existingMood.chores}');
+      print('📌 Relationship: ${existingMood.relationship}');
+      print('📌 Other: ${existingMood.other}');
       print("======================================");
-      // Add more fields if needed
       return;
     }
 

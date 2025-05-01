@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+
+import 'package:moodiary/data/repositories/authentication/authentication_repository.dart';
 import 'package:moodiary/utils/constants/colors.dart';
 
 import 'package:moodiary/utils/constants/sizes.dart';
@@ -16,10 +18,11 @@ class CalendarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(CalendarController());
     final dark = THelperFunctions.isDarkMode(context);
+    final controller = AuthenticationRepository.instance;
     return Scaffold(
       backgroundColor: dark ? TColors.dark : TColors.light,
-      body: SingleChildScrollView(
-        child: SafeArea(
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(TSizes.defaultSpace),
             child: Column(
@@ -40,6 +43,11 @@ class CalendarScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        child: ElevatedButton(
+            onPressed: () => controller.logout(), child: Text("Log out")),
       ),
     );
   }

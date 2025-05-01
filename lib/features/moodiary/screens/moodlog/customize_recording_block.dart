@@ -20,7 +20,7 @@ class CustomizeRecordingBlockScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    Get.put(RecordingBlockController());
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(

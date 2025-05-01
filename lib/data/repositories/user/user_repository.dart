@@ -18,7 +18,7 @@ class UserRepository extends GetxController {
   ///* Function to check if user exists in Firestore
   Future<bool> userExists(String uid) async {
     try {
-      final userDoc = await _db.collection('Users').doc(uid).get();
+      final userDoc = await _db.collection('users').doc(uid).get();
       return userDoc.exists;
     } on FirebaseException catch (e) {
       throw TFirebaseException(e.code).message;
@@ -34,7 +34,7 @@ class UserRepository extends GetxController {
   ///* Function to save user data to Firestore
   Future<void> saveUserRecord(UserModel user) async {
     try {
-      await _db.collection('Users').doc(user.id).set(user.toJson());
+      await _db.collection('users').doc(user.id).set(user.toJson());
     } on FirebaseException catch (e) {
       throw TFirebaseException(e.code).message;
     } on FormatException catch (_) {
@@ -50,7 +50,7 @@ class UserRepository extends GetxController {
   Future<UserModel> fetchUserDetails() async {
     try {
       final documentSnapshot = await _db
-          .collection('Users')
+          .collection('users')
           .doc(AuthenticationRepository.instance.authUser?.uid)
           .get();
       if (documentSnapshot.exists) {
@@ -73,7 +73,7 @@ class UserRepository extends GetxController {
   Future<void> updateUserData(UserModel updatedUser) async {
     try {
       await _db
-          .collection('Users')
+          .collection('users')
           .doc(updatedUser.id)
           .update(updatedUser.toJson());
     } on FirebaseException catch (e) {
@@ -91,7 +91,7 @@ class UserRepository extends GetxController {
   Future<void> updateSingleField(Map<String, dynamic> json) async {
     try {
       await _db
-          .collection('Users')
+          .collection('users')
           .doc(AuthenticationRepository.instance.authUser?.uid)
           .update(json);
     } on FirebaseException catch (e) {
@@ -108,7 +108,7 @@ class UserRepository extends GetxController {
   ///* Function to remove user data from Firestore
   Future<void> removeUserRecord(String userId) async {
     try {
-      await _db.collection('Users').doc(userId).delete();
+      await _db.collection('users').doc(userId).delete();
     } on FirebaseException catch (e) {
       throw TFirebaseException(e.code).message;
     } on FormatException catch (_) {

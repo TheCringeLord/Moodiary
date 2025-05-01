@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
 import '../../../data/repositories/mood/recording_block_repository.dart';
-import '../../../utils/constants/image_strings.dart';
+
 import '../models/recording_block_model.dart';
 
 import '../../../utils/popups/loaders.dart';
-import '../models/recording_icon_mode.dart';
+
 
 class RecordingBlockController extends GetxController {
   static RecordingBlockController get instance => Get.find();
@@ -18,7 +18,16 @@ class RecordingBlockController extends GetxController {
     try {
       isLoading.value = true;
       final blocks = await RecordingBlockRepository.instance.fetchAllBlocks();
-      recordingBlocks.assignAll(blocks);
+
+      // If no blocks exist, create defaults
+      if (blocks.isEmpty) {
+        await RecordingBlockRepository.instance.createDefaultBlocks();
+        final newBlocks =
+            await RecordingBlockRepository.instance.fetchAllBlocks();
+        recordingBlocks.assignAll(newBlocks);
+      } else {
+        recordingBlocks.assignAll(blocks);
+      }
     } catch (e) {
       TLoaders.errorSnackBar(title: "Error", message: e.toString());
     } finally {
@@ -75,61 +84,10 @@ class RecordingBlockController extends GetxController {
     }
   }
 
-  Future<void> createDefaultBlocksIfEmpty() async {
-    try {
-      final blocks = await RecordingBlockRepository.instance.fetchAllBlocks();
-      if (blocks.isNotEmpty) return;
-
-      final defaultBlocks = [
-        RecordingBlockModel(
-          id: 'emotions',
-          displayName: 'Emotions',
-          icons: [
-            RecordingIconModel(
-              id: 'excited',
-              label: 'Excited',
-              iconPath: TImages.google,
-            ),
-            RecordingIconModel(
-              id: 'relaxed',
-              label: 'Relaxed',
-              iconPath: TImages.google,
-            ),
-          ],
-          isCustom: false,
-          isHidden: false,
-        ),
-        RecordingBlockModel(
-          id: 'people',
-          displayName: 'People',
-          icons: [
-            RecordingIconModel(
-              id: 'friends',
-              label: 'Friends',
-              iconPath: TImages.google,
-            ),
-          ],
-          isCustom: false,
-          isHidden: false,
-        ),
-        // Add more blocks...
-      ];
-
-      for (var block in defaultBlocks) {
-        await RecordingBlockRepository.instance.createBlock(block);
-      }
-
-      recordingBlocks.assignAll(defaultBlocks);
-    } catch (e) {
-      print("Failed to create default blocks: $e");
-      rethrow;
-    }
-  }
-
   @override
   void onInit() {
     super.onInit();
-    createDefaultBlocksIfEmpty();
-    fetchBlocks(); // load existing blocks
+
+    fetchBlocks();
   }
 }

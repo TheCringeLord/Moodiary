@@ -1,6 +1,9 @@
+import 'package:get/get.dart';
 import 'package:moodiary/utils/constants/image_strings.dart';
 import 'package:moodiary/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
+
+import '../../../features/authentication/controllers/login/login_controller.dart';
 
 class TSocialButtons extends StatelessWidget {
   const TSocialButtons({
@@ -9,10 +12,11 @@ class TSocialButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(LoginController());
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
-        onPressed: () {},
+        onPressed: () => controller.googleSignIn(),
         icon: const Image(
           width: TSizes.iconLg,
           height: TSizes.iconLg,
@@ -24,42 +28,5 @@ class TSocialButtons extends StatelessWidget {
         ),
       ),
     );
-    //   mainAxisAlignment: MainAxisAlignment.center,
-    //   children: [
-    //     Container(
-    //       decoration: BoxDecoration(
-    //         border: Border.all(color: TColors.grey),
-    //         borderRadius: BorderRadius.circular(100),
-    //       ),
-    //       child: IconButton(
-    //         onPressed: () {},
-    //         icon: const Image(
-    //           width: TSizes.iconMd,
-    //           height: TSizes.iconMd,
-    //           image: AssetImage(
-    //             TImages.google,
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //     const SizedBox(width: TSizes.spaceBtwItems),
-    //     Container(
-    //       decoration: BoxDecoration(
-    //         border: Border.all(color: TColors.grey),
-    //         borderRadius: BorderRadius.circular(100),
-    //       ),
-    //       child: IconButton(
-    //         onPressed: () {},
-    //         icon: const Image(
-    //           width: TSizes.iconMd,
-    //           height: TSizes.iconMd,
-    //           image: AssetImage(
-    //             TImages.facebook,
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //   ],
-    // );
   }
 }

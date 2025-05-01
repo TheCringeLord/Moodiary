@@ -9,6 +9,7 @@ import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/helpers/helper_functions.dart';
 import '../../controllers/mood_controller.dart';
+import '../../controllers/recording_block_controller.dart';
 import '../../models/recording_block_model.dart';
 import '../../models/recording_icon_mode.dart';
 import 'customize_recording_block.dart';
@@ -20,7 +21,11 @@ class MoodlogScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final moodController = Get.put(MoodController());
-
+    Get.put(RecordingBlockController());
+    // 👇 Add this block
+    if (moodController.recordingBlocks.isEmpty) {
+      moodController.loadBlocks();
+    }
     return Scaffold(
       appBar: TAppBar(
         title: Text(

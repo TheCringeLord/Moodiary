@@ -13,7 +13,7 @@ class MoodRepository extends GetxController {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  bool useMock = true;
+  bool useMock = false;
 
   String get _userId {
     // Mock user ID for testing purposes (mock_user_123)

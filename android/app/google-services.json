@@ -12,7 +12,12 @@
           "package_name": "com.example.e_commerce"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "170774106521-24400bk8qojsnmg5ei8pdnoe6694dq39.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD9W10RzrU67eHmrZp7hC04zCCESq6WDqA"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "170774106521-24400bk8qojsnmg5ei8pdnoe6694dq39.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "170774106521-hn7ne4dql0ehkmi9unm60f8pt91iob5p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.moodiary"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +48,20 @@
           "package_name": "com.example.moodiary"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "170774106521-ui4995cpu2589skukckim0uvfv3ark3g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.moodiary",
+            "certificate_hash": "26b62a6a689f9c5b330fea9387d4e0ac390579bb"
+          }
+        },
+        {
+          "client_id": "170774106521-24400bk8qojsnmg5ei8pdnoe6694dq39.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD9W10RzrU67eHmrZp7hC04zCCESq6WDqA"
@@ -39,7 +69,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "170774106521-24400bk8qojsnmg5ei8pdnoe6694dq39.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "170774106521-hn7ne4dql0ehkmi9unm60f8pt91iob5p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.moodiary"
+              }
+            }
+          ]
         }
       }
     }
