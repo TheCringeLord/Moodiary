@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../constants/image_strings.dart';
+
 class THelperFunctions {
   static Color? getColor(String value) {
     /// Define your product specific colors here and it will match the attribute colors and show specific 🟠🟡🟢🔵🟣🟤
@@ -36,6 +38,23 @@ class THelperFunctions {
       return Colors.indigo;
     } else {
       return null;
+    }
+  }
+
+  static String getMoodIconPath(String moodKey) {
+    switch (moodKey) {
+      case 'veryHappy':
+        return TImages.veryHappy;
+      case 'happy':
+        return TImages.happy;
+      case 'neutral':
+        return TImages.neutral;
+      case 'unhappy':
+        return TImages.unHappy;
+      case 'sad':
+        return TImages.sad;
+      default:
+        return TImages.neutral;
     }
   }
 

@@ -1,4 +1,3 @@
-import 'package:moodiary/features/authentication/screens/onboarding/onboarding.dart';
 import 'package:flutter/material.dart';
 import 'package:moodiary/utils/theme/theme.dart';
 import 'package:get/get.dart';
@@ -15,7 +14,11 @@ class App extends StatelessWidget {
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
       initialBinding: GeneralBindings(),
-      home: const OnboardingScreen(),
+      home: Center(
+        child: CircularProgressIndicator(
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }

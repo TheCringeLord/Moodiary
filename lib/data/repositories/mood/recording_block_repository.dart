@@ -109,6 +109,26 @@ class RecordingBlockRepository extends GetxController {
     }
   }
 
+  ///* Update only the block name
+  Future<void> updateBlockName(String blockId, String newName) async {
+    try {
+      await _db
+          .collection('users')
+          .doc(_userId)
+          .collection('recording_blocks')
+          .doc(blockId)
+          .update({'displayName': newName});
+    } on FirebaseException catch (e) {
+      throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw "Something went wrong. Please try again later.";
+    }
+  }
+
   ///* Toggle block visibility
   Future<void> toggleBlockVisibility(String blockId, bool hidden) async {
     try {

@@ -5,13 +5,18 @@ import '../models/recording_block_model.dart';
 
 import '../../../utils/popups/loaders.dart';
 
-
 class RecordingBlockController extends GetxController {
   static RecordingBlockController get instance => Get.find();
 
   final RxList<RecordingBlockModel> recordingBlocks =
       <RecordingBlockModel>[].obs;
   final RxBool isLoading = false.obs;
+
+  List<RecordingBlockModel> get specialBlocks =>
+      recordingBlocks.where((b) => b.isSpecial && !b.isHidden).toList();
+
+  List<RecordingBlockModel> get normalBlocks =>
+      recordingBlocks.where((b) => !b.isSpecial && !b.isHidden).toList();
 
   ///* Load all recording blocks (active + hidden)
   Future<void> fetchBlocks() async {

@@ -10,6 +10,7 @@ import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/helpers/helper_functions.dart';
 
+import '../../../../utils/loaders/shimmer_effect.dart';
 import '../../../../utils/validators/validation.dart';
 import '../../controllers/mood_controller.dart';
 import '../../controllers/recording_block_controller.dart';
@@ -24,7 +25,7 @@ class MoodlogScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final moodController = Get.put(MoodController());
-    Get.put(RecordingBlockController());
+    final recordingBlockController = Get.put(RecordingBlockController());
 
     if (moodController.recordingBlocks.isEmpty) {
       moodController.loadBlocks();
@@ -63,23 +64,35 @@ class MoodlogScreen extends StatelessWidget {
               Obx(() {
                 final blocks = MoodController.instance.activeBlocks;
 
+                final isLoading = recordingBlockController.isLoading.value;
+                final numberOfBlocks = blocks.length;
                 final normalBlocks = blocks.where((b) => !b.isSpecial).toList();
                 final specialBlocks = blocks.where((b) => b.isSpecial).toList();
 
                 return Column(
                   children: [
-                    ///* 🔹 Normal blocks first
-                    for (final block in normalBlocks) ...[
-                      TRecordingBlock(block: block),
-                      const SizedBox(height: TSizes.spaceBtwSections),
-                    ],
+                    ///* 🔹 Normal blocks or shimmer
+                    if (isLoading)
+                      ...List.generate(
+                          numberOfBlocks,
+                          (_) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: TSizes.spaceBtwSections / 2),
+                                child: const TShimmerEffect(
+                                    width: double.infinity, height: 100),
+                              ))
+                    else
+                      for (final block in normalBlocks) ...[
+                        TRecordingBlock(block: block),
+                        const SizedBox(height: TSizes.spaceBtwSections),
+                      ],
 
-                    ///*  🔸 Then special blocks
+                    ///* 🔸 Then special blocks
                     for (final block in specialBlocks) ...[
                       if (block.id == 'sleep')
-                        TSleepBlock()
+                        const TSleepBlock()
                       else if (block.id == 'notes')
-                        TNotesBlock(),
+                        const TNotesBlock(),
                       const SizedBox(height: TSizes.spaceBtwSections),
                     ],
                   ],

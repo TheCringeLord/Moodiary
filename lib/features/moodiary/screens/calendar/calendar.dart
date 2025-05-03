@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:moodiary/common/widgets/appbar/appbar.dart';
+
 import 'package:moodiary/data/repositories/authentication/authentication_repository.dart';
 import 'package:moodiary/utils/constants/colors.dart';
 
 import 'package:moodiary/utils/constants/sizes.dart';
-
 import '../../../../common/widgets/custom_shape/container/rounded_container.dart';
 import '../../../../utils/helpers/helper_functions.dart';
 import '../../controllers/calendar_controller.dart';
+import '../../controllers/mood_controller.dart';
 
 class CalendarScreen extends StatelessWidget {
   const CalendarScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    
-    Get.put(CalendarController());
-    
-   
+    Get.put(MoodController());
+
     final dark = THelperFunctions.isDarkMode(context);
-    final controller = AuthenticationRepository.instance;
+    final auth = AuthenticationRepository.instance;
+
     return Scaffold(
       backgroundColor: dark ? TColors.dark : TColors.light,
       body: SafeArea(
@@ -43,7 +42,6 @@ class CalendarScreen extends StatelessWidget {
                 ///* Calendar Grid
                 TCalendarGridView(),
 
-
                 ///* Mood Cards To Show info
               ],
             ),
@@ -53,7 +51,7 @@ class CalendarScreen extends StatelessWidget {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(TSizes.defaultSpace),
         child: ElevatedButton(
-            onPressed: () => controller.logout(), child: Text("Log out")),
+            onPressed: () => auth.logout(), child: Text("Log out")),
       ),
     );
   }
@@ -81,7 +79,7 @@ class TCalendarGridView extends StatelessWidget {
           childAspectRatio: 0.7,
         ),
         itemCount: 42,
-        itemBuilder: (context, index) {
+        itemBuilder: (_, index) {
           if (index < startWeekday || index >= startWeekday + daysInMonth) {
             return const SizedBox();
           }
@@ -90,9 +88,7 @@ class TCalendarGridView extends StatelessWidget {
           final dayNumber = index - startWeekday + 1;
 
           return GestureDetector(
-            onTap: () {
-              controller.startMoodLogging(dayNumber);
-            },
+            onTap: () => controller.onDateTileTap(dayNumber),
             child: Obx(
               () => TDateTile(
                 dayNumber: dayNumber,

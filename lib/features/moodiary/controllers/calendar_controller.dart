@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
 
-import 'package:moodiary/utils/constants/image_strings.dart';
-import 'package:moodiary/utils/helpers/helper_functions.dart';
+import 'package:moodiary/features/moodiary/screens/moodlog/moodlog.dart';
+import 'package:moodiary/data/repositories/mood/mood_repository.dart';
+import 'package:moodiary/utils/popups/loaders.dart';
 
-import '../../../data/repositories/mood/mood_repository.dart';
-import '../../../utils/popups/loaders.dart';
+import '../../../utils/constants/image_strings.dart';
+
 import '../models/mood_model.dart';
-import '../screens/moodlog/moodlog.dart';
 import 'dart:async';
 
 class CalendarController extends GetxController {
@@ -15,6 +15,7 @@ class CalendarController extends GetxController {
   ///* Variables
   final Rx<DateTime> currentMonth = DateTime.now().obs;
   final Rxn<DateTime> selectedDate = Rxn<DateTime>();
+  final RxBool showMoodCard = false.obs;
 
   final RxList<MoodModel> monthlyMoods = <MoodModel>[].obs;
 
@@ -137,81 +138,70 @@ class CalendarController extends GetxController {
   }
 
   ///* Get the date from the selected day
-  DateTime getDateFromDay(int day) {
-    return DateTime(currentMonth.value.year, currentMonth.value.month, day);
-  }
+  DateTime getDateFromDay(int day) =>
+      DateTime(currentMonth.value.year, currentMonth.value.month, day);
 
   ///* Check if the given day is valid for the current month
   bool isValidDay(int day) => day > 0 && day <= daysInMonth;
 
-  ///* Start mood logging for a specific day
-  void startMoodLogging(int dayNumber) async {
-    // compute the actual DateTime for this tile
-    final date = getDateFromDay(dayNumber);
+  ///!----------- Mood Logging -----------!///
+  Future<void> onDateTileTap(int day) async {
+    final date = getDateFromDay(day);
 
-    // 1) Prevent logging future dates
     if (date.isAfter(DateTime.now())) {
       TLoaders.warningSnackBar(
-        title: "Oh no!",
+        title: "Oops!",
         message: "You cannot select future dates.",
       );
       return;
     }
 
-    // store the selection
+    //* Always select & show the card
     selectedDate.value = date;
+    showMoodCard.value = true;
 
-    // 2) Check if a mood already exists
-    final existingMood = await MoodRepository.instance.getMoodByDate(date);
+    //* Look up an existing MoodModel in this month’s cache
+    final existing = monthlyMoods.firstWhereOrNull((m) =>
+        m.date.year == date.year &&
+        m.date.month == date.month &&
+        m.date.day == date.day);
 
-    ///TODO: Will add a Card to show the existing mood in the calendar screen
-    if (existingMood != null) {
-      // print("======================================");
-      // print(
-      //     '✅ Mood already logged for ${THelperFunctions.getFormattedDate(date)}');
-      // print('📌 Main mood: ${existingMood.mainMood}');
-      // print('📌 Emotions: ${existingMood.emotions}');
-      // print('📌 People: ${existingMood.people}');
-      // print('📌 Weather: ${existingMood.weather}');
-      // print('📌 Hobbies: ${existingMood.hobbies}');
-      // print('📌 Work: ${existingMood.work}');
-      // print('📌 Health: ${existingMood.health}');
-      // print('📌 Chores: ${existingMood.chores}');
-      // print('📌 Relationship: ${existingMood.relationship}');
-      // print('📌 Other: ${existingMood.other}');
-
-      // // 🔁 Custom blocks
-      // if (existingMood.customBlocks != null &&
-      //     existingMood.customBlocks!.isNotEmpty) {
-      //   print('🔧 Custom Blocks:');
-      //   existingMood.customBlocks!.forEach((blockId, iconIds) {
-      //     print('• $blockId: ${iconIds.join(', ')}');
-      //   });
-      // }
-
-      // print("======================================");
-
+    if (existing != null) {
+      //* We have a logged mood → print all its info and stop
+      print("=== Mood details for $date ===");
+      print("Main Mood     : ${existing.mainMood}");
+      print("Sleep Duration: ${existing.sleepDuration} min");
+      print("Notes         : ${existing.note}");
+      print("Emotions      : ${existing.emotions}");
+      print("People        : ${existing.people}");
+      print("Weather       : ${existing.weather}");
+      print("Hobbies       : ${existing.hobbies}");
+      print("Work          : ${existing.work}");
+      print("Health        : ${existing.health}");
+      print("Chores        : ${existing.chores}");
+      print("Relationship  : ${existing.relationship}");
+      print("Other         : ${existing.other}");
+      print("Custom Blocks : ${existing.customBlocks}");
+      print("Photos        : ${existing.photos}");
+      print("===============================");
       return;
     }
 
-    // 3) No existing mood → navigate to log screen
-    Get.to(() => MoodlogScreen(selectedDate: date));
+    //* No existing mood → navigate to log screen
+    await Get.to(() => MoodlogScreen(selectedDate: date));
   }
+
+  ///!----------- Mood Logging END -----------!///
 
   ///* Load moods for the current month
   void loadMoodsForCurrentMonth() {
-    print("================MOOD LOADING======================");
-    print("Loading moods for ${currentMonth.value}");
     final month = currentMonth.value;
 
-    // Clear previous subscription
     _moodStream?.cancel();
 
     _moodStream = MoodRepository.instance
         .getMoodsByMonth(month)
         .listen((moods) => monthlyMoods.value = moods);
-    print("Loading moods for ${currentMonth.value} Successful");
-    print("================MOOD LOADING Successful======================");
   }
 
   StreamSubscription? _moodStream;

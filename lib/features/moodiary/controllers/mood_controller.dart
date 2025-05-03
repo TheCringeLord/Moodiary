@@ -115,7 +115,7 @@ class MoodController extends GetxController {
         relationship: getSelectedIcons("relationship"),
         other: getSelectedIcons("other"),
         customBlocks: getCustomBlocksMap(),
-        note: notes.text,
+        note: notes.text.trim(),
         sleepDuration: sleepDurationInMinutes,
         photos: [],
       );
