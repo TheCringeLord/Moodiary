@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class TColors {
   // App theme colors
-  static const Color primary = Color.fromARGB(255, 126, 191, 255);
+  static const Color primary = Color.fromARGB(255, 126, 160, 255);
   static const Color secondary = Color.fromARGB(255, 212, 234, 230);
   static const Color accent = Color.fromARGB(255, 48, 134, 125);
 
@@ -18,13 +18,13 @@ class TColors {
   );
 
   // Text colors
-  static const Color textPrimary = Color.fromARGB(255, 55, 71, 79);
-  static const Color textSecondary = Color.fromARGB(255, 120, 144, 156);
+  static const Color textPrimary = Color.fromARGB(255, 55, 57, 79);
+  static const Color textSecondary = Color.fromARGB(255, 120, 127, 156);
   static const Color textWhite = Colors.white;
 
   // Background colors
-  static const Color light = Color.fromARGB(255, 237, 243, 252);
-  static const Color dark = Color.fromARGB(255, 18, 27, 37);
+  static const Color light = Color.fromARGB(255, 237, 240, 252);
+  static const Color dark = Color.fromARGB(255, 18, 23, 37);
   static const Color primaryBackground = Color(0xFFF3F5FF);
 
   // Background Container colors
@@ -32,8 +32,8 @@ class TColors {
   static Color darkContainer = TColors.white.withOpacity(0.1);
 
   // Button colors
-  static const Color buttonPrimary = Color.fromARGB(255, 75, 147, 255);
-  static const Color buttonSecondary = Color(0xFF6C757D);
+  static const Color buttonPrimary = Color.fromARGB(255, 255, 75, 75);
+  static const Color buttonSecondary = Color.fromARGB(255, 125, 108, 108);
   static const Color buttonDisabled = Color(0xFFC4C4C4);
 
   // Border colors

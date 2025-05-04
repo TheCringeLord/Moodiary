@@ -38,6 +38,7 @@ class CreateBlockController extends GetxController {
         id: blockName.text.trim().toLowerCase().replaceAll(' ', '_'),
         displayName: blockName.text.trim(),
         icons: [],
+        isCustom: true,
         isHidden: false,
       );
 

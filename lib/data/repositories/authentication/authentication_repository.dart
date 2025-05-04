@@ -32,31 +32,45 @@ class AuthenticationRepository extends GetxController {
     // Remove the splash screen
     FlutterNativeSplash.remove();
     // Call the screen redirect function to navigate to the appropriate screen
-    screenRedirect();
+    try {
+      screenRedirect();
+    } catch (e) {
+      debugPrint("❌ screenRedirect error: $e");
+      Get.offAll(() => const OnboardingScreen()); // fallback screen
+    }
   }
 
   ///* Function to Show Relevant Screen
-  screenRedirect() async {
+  Future<void> screenRedirect() async {
     final user = _auth.currentUser;
+    print('🔔 screenRedirect() called');
+    print('🔹 currentUser: $user');
 
     if (user != null) {
-      //If the user is logged in
+      print('🔹 user.emailVerified: ${user.emailVerified}');
       if (user.emailVerified) {
-        //If the user's email is verified, navigate to the home screen
+        print('➡️ Email verified → NavigationMenu');
         Get.offAll(() => const NavigationMenu());
       } else {
-        //If the user's email is not verified, navigate to the verify email screen
-        Get.offAll(() => VerifyEmailScreen(email: _auth.currentUser?.email));
+        print(
+            '➡️ Email not verified → VerifyEmailScreen(email: ${user.email})');
+        Get.offAll(() => VerifyEmailScreen(email: user.email));
       }
     } else {
-      //Local Storage
-      deviceStorage.writeIfNull('isFirstTime', true);
-      //If the user is not logged in and it's the first time, navigate to the onboarding screen
-      deviceStorage.read('isFirstTime') != true
-          ? Get.offAll(() =>
-              const LoginScreen()) // Navigate to the login screen if not first time
-          : Get.offAll(() =>
-              const OnboardingScreen()); // Navigate to the onboarding screen if first time
+      // read (or default) the flag
+      final isFirstTime = await deviceStorage.read('isFirstTime') ?? true;
+      print('  isFirstTime before: $isFirstTime');
+
+      if (isFirstTime) {
+        // first time → show onboarding, then mark as done
+        print('➡️ Showing Onboarding');
+        await deviceStorage.write('isFirstTime', false);
+        Get.offAll(() => const OnboardingScreen());
+      } else {
+        // not first time → go to login
+        print('➡️ Showing Login');
+        Get.offAll(() => const LoginScreen());
+      }
     }
   }
 

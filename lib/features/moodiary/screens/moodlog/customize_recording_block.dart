@@ -13,10 +13,13 @@ import '../../../../common/widgets/appbar/tabbar.dart';
 import '../../../../common/widgets/custom_shape/container/rounded_container.dart';
 
 import '../../../../common/widgets/dialog/bottom_dialog.dart';
+import '../../../../data/repositories/mood/recording_block_repository.dart';
 import '../../../../utils/loaders/shimmer_effect.dart';
+import '../../controllers/CRUD_icon/icon_block_controller.dart';
 import '../../controllers/CRUD_recording_block/create_block_controller.dart';
 import '../../controllers/recording_block_controller.dart';
 import '../../controllers/CRUD_recording_block/update_block_name_controller.dart';
+import '../../models/icon_metadata.dart';
 import '../../models/recording_block_model.dart';
 import '../../models/recording_icon_mode.dart';
 
@@ -26,10 +29,15 @@ class CustomizeRecordingBlockScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
+
+    ///* Initialize RecordingBlock Controllers
     Get.put(UpdateBlockNameController());
     Get.put(HideBlockController());
     Get.put(DeleteBlockController());
     Get.put(CreateBlockController());
+
+    ///* Initialize Icon Controllers
+    Get.put(IconBlockController());
 
     return DefaultTabController(
       length: 2,
@@ -112,6 +120,7 @@ class TActiveBlockTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(TSizes.defaultSpace),
@@ -127,6 +136,7 @@ class TActiveBlockTab extends StatelessWidget {
                   ctrl.blockName.clear(); // reset
 
                   showModalBottomSheet(
+                    backgroundColor: dark ? TColors.dark : TColors.light,
                     context: context,
                     isScrollControlled: true,
                     shape: const RoundedRectangleBorder(
@@ -235,6 +245,7 @@ class TNotesBlockCustomize extends StatelessWidget {
                       final isHidden = block.isHidden;
 
                       showModalBottomSheet(
+                        backgroundColor: dark ? TColors.dark : TColors.light,
                         context: context,
                         shape: const RoundedRectangleBorder(
                           borderRadius:
@@ -358,6 +369,7 @@ class TSleepBlockCustomize extends StatelessWidget {
                       final isHidden = block.isHidden;
 
                       showModalBottomSheet(
+                        backgroundColor: dark ? TColors.dark : TColors.light,
                         context: context,
                         shape: const RoundedRectangleBorder(
                           borderRadius:
@@ -498,6 +510,7 @@ class TCustomizeRecordingBlock extends StatelessWidget {
                     onPressed: () {
                       updateCtrl.initializeName(block);
                       showModalBottomSheet(
+                        backgroundColor: dark ? TColors.dark : TColors.light,
                         context: context,
                         isScrollControlled: true,
                         shape: const RoundedRectangleBorder(
@@ -528,6 +541,7 @@ class TCustomizeRecordingBlock extends StatelessWidget {
 
                       showModalBottomSheet(
                         context: context,
+                        backgroundColor: dark ? TColors.dark : TColors.light,
                         shape: const RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.vertical(top: Radius.circular(20)),
@@ -632,28 +646,211 @@ class TCustomizeRecordingIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
     return GestureDetector(
-      onTap: () {}, // Icon customization modal
+      onTap: () {
+        showModalBottomSheet(
+          backgroundColor: dark ? TColors.dark : TColors.light,
+          context: context,
+          isScrollControlled: true,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          builder: (_) => _TEditIconDialog(icon: icon, blockId: blockId),
+        );
+      },
+      // Icon customization modal
       child: Column(
         children: [
           TRoundedContainer(
             width: size,
             height: size,
             radius: size / 2,
-            backgroundColor: TColors.grey,
-            child: Icon(
-              Iconsax.gallery_edit,
-              color: TColors.textPrimary,
-              size: size / 2,
+            backgroundColor: dark ? TColors.white : TColors.light,
+            child: Padding(
+              padding: const EdgeInsets.all(TSizes.sm),
+              child: Image.asset(
+                icon.iconPath,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           const SizedBox(height: TSizes.xs),
           Text(
             icon.label,
             style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                  color: TColors.textPrimary,
+                  color: dark ? TColors.light : TColors.textPrimary,
                 ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TEditIconDialog extends StatelessWidget {
+  final RecordingIconModel icon;
+  final String blockId;
+
+  const _TEditIconDialog({
+    required this.icon,
+    required this.blockId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = TextEditingController(text: icon.label);
+    final dark = THelperFunctions.isDarkMode(context);
+    final iconCtrl = IconBlockController.instance;
+    iconCtrl.setTempIconPath(icon.iconPath);
+    return Padding(
+      padding: const EdgeInsets.all(TSizes.defaultSpace),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(icon.label, style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: TSizes.spaceBtwItems),
+
+          /// Icon with overlays pencil
+          GestureDetector(
+            ///TODO: Add icon picker using TPredefinedIconPicker
+            onTap: () {
+              showModalBottomSheet<IconMetadata>(
+                backgroundColor: dark ? TColors.dark : TColors.light,
+                context: context,
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (_) => const TPredefinedIconPicker(),
+              ).then((selectedIcon) {
+                if (selectedIcon != null) {
+                  // 1) update the temp path so Obx rebuilds the dialog UI
+                  iconCtrl.setTempIconPath(selectedIcon.iconPath);
+
+                  // 2) update your block model + save
+                  final recordingCtrl = RecordingBlockController.instance;
+
+                  final blockIndex = recordingCtrl.recordingBlocks
+                      .indexWhere((b) => b.id == blockId);
+                  if (blockIndex == -1) return;
+
+                  final block = recordingCtrl.recordingBlocks[blockIndex];
+                  final iconIndex =
+                      block.icons.indexWhere((i) => i.id == icon.id);
+                  if (iconIndex == -1) return;
+
+                  // Replace the icon object
+                  final updatedIcon = RecordingIconModel(
+                    id: icon.id,
+                    label: icon.label,
+                    iconPath: selectedIcon.iconPath,
+                    isCustom: icon.isCustom,
+                  );
+                  block.icons[iconIndex] = updatedIcon;
+
+                  // Trigger UI update
+                  recordingCtrl.recordingBlocks[blockIndex] = block;
+                  recordingCtrl.recordingBlocks.refresh();
+
+                  // Save to Firebase
+                  RecordingBlockRepository.instance.updateBlock(block);
+                }
+              });
+            },
+
+            child: Obx(() {
+              final displayedPath = iconCtrl.selectedIconPath.value.isNotEmpty
+                  ? iconCtrl.selectedIconPath.value
+                  : icon.iconPath;
+
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  TRoundedContainer(
+                    width: 70,
+                    height: 70,
+                    radius: 35,
+                    backgroundColor: dark ? TColors.white : TColors.light,
+                    child: Padding(
+                      padding: const EdgeInsets.all(TSizes.iconXs),
+                      child: Image.asset(
+                        displayedPath,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: CircleAvatar(
+                      radius: 14,
+                      backgroundColor: TColors.primary,
+                      child: Icon(Iconsax.edit, size: 16, color: TColors.white),
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ),
+
+          const SizedBox(height: TSizes.spaceBtwSections),
+
+          /// Rename icon field
+          TextFormField(
+            controller: controller,
+            maxLength: 12,
+            decoration: const InputDecoration(labelText: "Rename icon"),
+          ),
+          const SizedBox(height: TSizes.spaceBtwItems),
+
+          /// Action buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              /// Delete
+              Expanded(
+                child: TextButton.icon(
+                  onPressed: () {
+                    IconBlockController.instance
+                        .deleteIconFromBlock(blockId, icon.id);
+                    iconCtrl.resetTempIconPath(); // ✅ Clean up
+                    Get.back();
+                  },
+                  icon: const Icon(Iconsax.trash, color: TColors.error),
+                  label: Text(
+                    "Delete",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .apply(color: TColors.error),
+                  ),
+                ),
+              ),
+
+              /// Save rename
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    final newLabel = controller.text.trim();
+                    if (newLabel.isNotEmpty) {
+                      IconBlockController.instance.updateIconLabel(
+                        blockId,
+                        icon.id,
+                        newLabel,
+                      );
+                    }
+                    iconCtrl.resetTempIconPath(); // ✅ Clean up
+                    Get.back();
+                  },
+                  child: Text(
+                    "Save",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -667,9 +864,53 @@ class TAddIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
     return GestureDetector(
       onTap: () {
-        // Show modal to add icon
+        showModalBottomSheet<IconMetadata>(
+          backgroundColor: dark ? TColors.dark : TColors.light,
+          context: context,
+          isScrollControlled: true,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(TSizes.cardRadiusLg),
+            ),
+          ),
+          builder: (_) => const TPredefinedIconPicker(),
+        ).then((selectedIcon) {
+          if (selectedIcon != null) {
+            final controller = TextEditingController();
+            final formKey = GlobalKey<FormState>();
+
+            showModalBottomSheet(
+              backgroundColor: dark ? TColors.dark : TColors.light,
+              context: context,
+              isScrollControlled: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              builder: (_) => TBottomDialog(
+                title: "Label Icon",
+                controller: controller,
+                formKey: formKey,
+                maxLength: 12,
+                hintText: "e.g. Excited",
+                onConfirm: () {
+                  if (formKey.currentState!.validate()) {
+                    final label = controller.text.trim();
+
+                    IconBlockController.instance.addIconToBlock(
+                      blockId,
+                      selectedIcon,
+                      label,
+                    );
+                    Get.back(); // Close dialog
+                  }
+                },
+              ),
+            );
+          }
+        });
       },
       child: Column(
         children: [
@@ -688,6 +929,80 @@ class TAddIconButton extends StatelessWidget {
                 ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class TPredefinedIconPicker extends StatelessWidget {
+  const TPredefinedIconPicker({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final categories = getIconCategories();
+    return FractionallySizedBox(
+      heightFactor: 0.8,
+      child: DefaultTabController(
+        length: categories.length,
+        child: Padding(
+          padding: const EdgeInsets.all(TSizes.defaultSpace),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Select an icon",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: TSizes.spaceBtwSections),
+              TTabBar(
+                tabs: categories.map((c) {
+                  return Tab(text: iconCategoryToString(c));
+                }).toList(),
+              ),
+              const SizedBox(height: TSizes.spaceBtwSections),
+              // Expand TabBarView to fill available space
+              Expanded(
+                child: TabBarView(
+                  children: categories.map((category) {
+                    final icons = getIconsByCategory(category);
+                    return GridView.builder(
+                      padding: EdgeInsets.zero,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 7,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                      ),
+                      itemCount: icons.length,
+                      itemBuilder: (_, idx) {
+                        final iconMeta = icons[idx];
+                        return GestureDetector(
+                          onTap: () {
+                            Get.back(result: iconMeta);
+                          },
+                          child: TRoundedContainer(
+                            padding: EdgeInsets.all(TSizes.xs),
+                            width: 60,
+                            height: 60,
+                            radius: 30,
+                            backgroundColor: TColors.white,
+                            child: Padding(
+                              padding: const EdgeInsets.all(TSizes.xs),
+                              child: Image.asset(
+                                iconMeta.iconPath,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

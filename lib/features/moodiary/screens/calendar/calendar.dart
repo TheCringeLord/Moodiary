@@ -17,7 +17,7 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(MoodController());
-
+    Get.put(CalendarController());
     final dark = THelperFunctions.isDarkMode(context);
     final auth = AuthenticationRepository.instance;
 

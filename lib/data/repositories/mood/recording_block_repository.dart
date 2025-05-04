@@ -14,14 +14,11 @@ class RecordingBlockRepository extends GetxController {
   static RecordingBlockRepository get instance => Get.find();
   final _db = FirebaseFirestore.instance;
 
-  bool useMock = false;
-
   String get _userId {
-    if (useMock) return "Test Account 1";
-
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      throw "User not logged in";
+      throw TFirebaseException('User not authenticated. Please log in.')
+          .message;
     }
     return user.uid;
   }
@@ -199,7 +196,7 @@ class RecordingBlockRepository extends GetxController {
           RecordingIconModel(
               id: 'happy',
               label: 'Happy',
-              iconPath: iconPlaceholder,
+              iconPath: TImages.bowling,
               isCustom: false),
           RecordingIconModel(
               id: 'sad',

@@ -8,7 +8,6 @@ class TImages {
   // -- Social Logos
   static const String google = "assets/logos/google-icon.png";
   static const String facebook = "assets/logos/facebook-icon.png";
-  // -- Category Icons
 
   // -- Mood Icons
   static const String veryHappy = "assets/icons/mood/Very Happy.png";
@@ -16,6 +15,44 @@ class TImages {
   static const String neutral = "assets/icons/mood/Neutral.png";
   static const String unHappy = "assets/icons/mood/Unhappy.png";
   static const String sad = "assets/icons/mood/Very sad.png";
+  // -- Activity Icons
+  static const String bowling =
+      "assets/icons/packs/activity/icons8-bowling-100.png";
+  static const String boxing =
+      "assets/icons/packs/activity/icons8-boxing-glove-100.png";
+  static const String game1 =
+      "assets/icons/packs/activity/icons8-game-controller-100.png";
+  static const String pingPong =
+      "assets/icons/packs/activity/icons8-ping-pong-100.png";
+  static const String puck = "assets/icons/packs/activity/icons8-puck-100.png";
+  static const String soccer =
+      "assets/icons/packs/activity/icons8-soccer-ball-100.png";
+  static const String game2 =
+      "assets/icons/packs/activity/icons8-visual-game-boy-100.png";
+  // -- Weather Icons
+  static const String sunny =
+      "assets/icons/packs/weather/icons8-summer-100.png";
+  static const String rainy = "assets/icons/packs/weather/icons8-rain-100.png";
+  static const String cloudy =
+      "assets/icons/packs/weather/icons8-clouds-100.png";
+  static const String stormy =
+      "assets/icons/packs/weather/icons8-storm-100.png";
+  static const String rainbow =
+      "assets/icons/packs/weather/icons8-rainbow-100.png";
+  // -- Emotion Icons
+  static const String excited =
+      "assets/icons/packs/emotion/icons8-confetti-100.png";
+  static const String relaxed =
+      "assets/icons/packs/emotion/icons8-the-toast-100.png";
+  // -- Expression Icons
+  static const String bored =
+      "assets/icons/packs/expression/icons8-bored-100.png";
+  static const String crazy =
+      "assets/icons/packs/expression/icons8-crazy-100.png";
+  static const String neutralExpression =
+      "assets/icons/packs/expression/icons8-neutral-100.png";
+  static const String smile =
+      "assets/icons/packs/expression/icons8-smiling-face-with-heart-100.png";
 
   // -- Animations
 

@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:moodiary/utils/constants/sizes.dart';
 
 class TBottomDialog extends StatelessWidget {
-  final String title;
-  final TextEditingController controller;
-  final GlobalKey<FormState> formKey;
-  final VoidCallback onConfirm;
-  final String buttonText;
-
   const TBottomDialog({
     super.key,
     required this.title,
@@ -15,7 +10,16 @@ class TBottomDialog extends StatelessWidget {
     required this.onConfirm,
     required this.formKey,
     this.buttonText = "Save Changes",
+    this.hintText = "Enter a name",
+    this.maxLength = 14,
   });
+  final String title;
+  final TextEditingController controller;
+  final GlobalKey<FormState> formKey;
+  final VoidCallback onConfirm;
+  final String buttonText;
+  final String hintText;
+  final int maxLength;
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +32,20 @@ class TBottomDialog extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
+              Row(
+                children: [
+                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+                ],
+              ),
               const SizedBox(height: TSizes.spaceBtwItems),
               TextFormField(
                 controller: controller,
-                maxLength: 14,
+                maxLength: maxLength,
                 validator: (value) => (value == null || value.trim().isEmpty)
                     ? "Please enter a name"
                     : null,
-                decoration: const InputDecoration(
-                  labelText: "Block name",
+                decoration: InputDecoration(
+                  labelText: hintText,
                 ),
               ),
               const SizedBox(height: TSizes.spaceBtwItems),

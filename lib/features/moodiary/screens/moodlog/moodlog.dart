@@ -314,22 +314,35 @@ class TRecordingIcon extends StatelessWidget {
           onTap: () => moodController.toggleIcon(blockId, icon.id),
           child: Column(
             children: [
+              // … inside TRecordingIcon.build(), replace the TRoundedContainer child with:
+
               TRoundedContainer(
                 width: size,
                 height: size,
                 radius: size / 2,
-                backgroundColor: isSelected ? TColors.primary : TColors.grey,
-                child: Icon(
-                  Iconsax.gallery,
-                  color: isSelected ? TColors.white : TColors.textPrimary,
-                  size: size / 2,
+                backgroundColor: isSelected
+                    ? TColors.light
+                    : dark
+                        ? TColors.white
+                        : TColors.light,
+                child: Padding(
+                  padding: const EdgeInsets.all(TSizes.xs),
+                  child: ClipOval(
+                    child: ColorFiltered(
+                      colorFilter: isSelected
+                          ? const ColorFilter.mode(
+                              Colors.transparent, BlendMode.saturation)
+                          : const ColorFilter.mode(
+                              TColors.lightGrey, BlendMode.saturation),
+                      child: Image.asset(
+                        icon.iconPath,
+                        width: size,
+                        height: size,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                 ),
-                // child: Image.asset(
-                //   icon.iconPath,
-                //   width: 30,
-                //   height: 30,
-                //   fit: BoxFit.contain,
-                // ),
               ),
               const SizedBox(height: TSizes.xs),
               Text(

@@ -9,6 +9,8 @@ import '../../../utils/constants/image_strings.dart';
 import '../models/mood_model.dart';
 import 'dart:async';
 
+import 'package:moodiary/features/moodiary/controllers/mood_controller.dart';
+
 class CalendarController extends GetxController {
   static CalendarController get instance => Get.find();
 
@@ -24,7 +26,7 @@ class CalendarController extends GetxController {
     super.onInit();
 
     // Load moods when controller starts
-    loadMoodsForCurrentMonth();
+    _bindStream();
 
     // Re-fetch moods whenever month changes
     ever(currentMonth, (_) => loadMoodsForCurrentMonth());
@@ -33,7 +35,13 @@ class CalendarController extends GetxController {
   @override
   void onClose() {
     _moodStream?.cancel();
+
     super.onClose();
+  }
+
+  void _bindStream() {
+    monthlyMoods.bindStream(
+        MoodRepository.instance.getMoodsByMonth(currentMonth.value));
   }
 
   ///* Move to previous month
@@ -188,7 +196,8 @@ class CalendarController extends GetxController {
     }
 
     //* No existing mood → navigate to log screen
-    await Get.to(() => MoodlogScreen(selectedDate: date));
+    await Get.to(() => MoodlogScreen(selectedDate: date))
+        ?.then((_) => Get.delete<MoodController>());
   }
 
   ///!----------- Mood Logging END -----------!///
