@@ -7,13 +7,26 @@ class TColors {
   static const Color accent = Color.fromARGB(255, 48, 134, 125);
 
   //Gradient Colors
-  static const Gradient linearGradient = LinearGradient(
-    begin: Alignment(0, 0),
-    end: Alignment(0.707, -0.707),
+  static Gradient darkLinearGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
     colors: [
-      Color(0xffff9a9e),
-      Color(0xfffad0c4),
-      Color(0xfffad0c4),
+      Color.fromARGB(255, 149, 255, 205).withAlpha(255),
+      Color.fromARGB(255, 34, 223, 236).withAlpha(150),
+      Color.fromARGB(255, 160, 212, 255).withAlpha(80),
+      Color.fromARGB(255, 238, 255, 160).withAlpha(30),
+      Color.fromARGB(255, 255, 238, 160).withAlpha(0)
+    ],
+  );
+  static Gradient lightLinearGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color.fromARGB(255, 103, 167, 250).withAlpha(150),
+      Color.fromARGB(255, 123, 213, 255).withAlpha(80),
+      Color.fromARGB(255, 149, 221, 255).withAlpha(50),
+      Color.fromARGB(255, 160, 255, 231).withAlpha(10),
+      Color.fromARGB(255, 160, 255, 219).withAlpha(0)
     ],
   );
 

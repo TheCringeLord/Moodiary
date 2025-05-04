@@ -44,6 +44,7 @@ dependencies:
   google_sign_in: ^6.3.0
   table_calendar: ^3.2.0
   month_picker_dialog: ^6.0.2
+  fl_chart: ^0.71.0
 
   #--------------- ./ PACKAGES END ------------------#
 

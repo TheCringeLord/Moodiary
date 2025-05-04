@@ -15,7 +15,7 @@ import '../../../../common/widgets/custom_shape/container/rounded_container.dart
 import '../../../../common/widgets/dialog/bottom_dialog.dart';
 import '../../../../data/repositories/mood/recording_block_repository.dart';
 import '../../../../utils/loaders/shimmer_effect.dart';
-import '../../controllers/CRUD_icon/icon_block_controller.dart';
+import '../../controllers/icon_block_controller.dart';
 import '../../controllers/CRUD_recording_block/create_block_controller.dart';
 import '../../controllers/recording_block_controller.dart';
 import '../../controllers/CRUD_recording_block/update_block_name_controller.dart';

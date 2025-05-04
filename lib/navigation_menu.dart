@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
+import 'features/moodiary/screens/reports/report.dart';
+
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
 
@@ -56,9 +58,7 @@ class NavigationController extends GetxController {
     const Scaffold(
       backgroundColor: Color.fromARGB(255, 48, 117, 134),
     ),
-    const Scaffold(
-      backgroundColor: Color.fromARGB(255, 48, 92, 134),
-    ),
+    const ReportScreen(),
     const Scaffold(
       backgroundColor: Color.fromARGB(255, 48, 75, 134),
     ),

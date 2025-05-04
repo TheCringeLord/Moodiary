@@ -28,8 +28,13 @@ class MoodRepository extends GetxController {
           .set(mood.toMap());
     } on FirebaseException catch (e) {
       throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw "Something went wrong. Please try again later.";
     }
-    // …other catches…
   }
 
   ///* Edit mood

@@ -5,7 +5,7 @@ import 'package:moodiary/features/moodiary/controllers/recording_block_controlle
 import 'package:moodiary/features/moodiary/models/recording_icon_mode.dart';
 
 
-import '../../models/icon_metadata.dart';
+import '../models/icon_metadata.dart';
 
 class IconBlockController extends GetxController {
   static IconBlockController get instance => Get.find();

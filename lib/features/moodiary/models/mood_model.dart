@@ -182,6 +182,7 @@ class MoodModel {
       tags: tags ?? this.tags,
     );
   }
+
   ///* Helper Functions
   bool get hasEmotions => emotions != null && emotions!.isNotEmpty;
   bool get hasActivities {
@@ -202,15 +203,15 @@ class MoodModel {
 
   int get moodScore {
     switch (mainMood) {
-      case "very_happy":
+      case "veryHappy":
         return 5;
       case "happy":
         return 4;
       case "neutral":
         return 3;
-      case "sad":
+      case "unhappy":
         return 2;
-      case "very_sad":
+      case "sad":
         return 1;
       default:
         return 3;

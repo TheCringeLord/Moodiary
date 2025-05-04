@@ -324,16 +324,19 @@ class TRecordingIcon extends StatelessWidget {
                     ? TColors.light
                     : dark
                         ? TColors.white
-                        : TColors.light,
-                child: Padding(
-                  padding: const EdgeInsets.all(TSizes.xs),
-                  child: ClipOval(
-                    child: ColorFiltered(
-                      colorFilter: isSelected
-                          ? const ColorFilter.mode(
-                              Colors.transparent, BlendMode.saturation)
-                          : const ColorFilter.mode(
-                              TColors.lightGrey, BlendMode.saturation),
+                        : TColors.grey,
+                child: ClipOval(
+                  child: ColorFiltered(
+                    colorFilter: isSelected
+                        ? const ColorFilter.mode(
+                            Colors.transparent, BlendMode.saturation)
+                        : dark
+                            ? const ColorFilter.mode(
+                                TColors.lightGrey, BlendMode.saturation)
+                            : const ColorFilter.mode(
+                                TColors.grey, BlendMode.saturation),
+                    child: Padding(
+                      padding: const EdgeInsets.all(TSizes.sm),
                       child: Image.asset(
                         icon.iconPath,
                         width: size,
