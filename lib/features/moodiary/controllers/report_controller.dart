@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moodiary/utils/constants/sizes.dart';
 
+
 import '../../../data/repositories/mood/mood_repository.dart';
+import '../../../utils/constants/enums.dart';
+import '../models/icon_metadata.dart';
 import '../models/mood_model.dart';
+import 'recording_block_controller.dart';
 
 class ReportController extends GetxController {
   static ReportController get instance => Get.find();
@@ -12,6 +16,15 @@ class ReportController extends GetxController {
   final selectedMonth = DateTime.now().obs;
   final RxList<MoodModel> moods = <MoodModel>[].obs;
   final RxList<FlSpot> spots = <FlSpot>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // whenever selectedMonth changes, reload
+    ever(selectedMonth, (DateTime m) => loadMonthlyMoodLogs(m));
+    // initial load
+    loadMonthlyMoodLogs(selectedMonth.value);
+  }
 
   Future<void> loadMonthlyMoodLogs(DateTime month) async {
     selectedMonth.value = month;
@@ -111,5 +124,54 @@ class ReportController extends GetxController {
     if (selected != null) {
       loadMonthlyMoodLogs(selected);
     }
+  }
+
+  List<MapEntry<IconMetadata, int>> get mostFrequentIcons {
+    // 1) Count raw icon-IDs across all logged moods
+    final iconCounts = <String, int>{};
+    for (final m in moods) {
+      final allIds = <String>[
+        ...?m.emotions,
+        ...?m.weather,
+        ...?m.people,
+        ...?m.hobbies,
+        ...?m.work,
+        ...?m.health,
+        ...?m.chores,
+        ...?m.relationship,
+        ...?m.other,
+      ];
+      m.customBlocks?.values.forEach(allIds.addAll);
+      for (var id in allIds) {
+        iconCounts[id] = (iconCounts[id] ?? 0) + 1;
+      }
+    }
+
+    // 2) Take top 10 by frequency
+    final sorted = iconCounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    final top = sorted.take(10);
+
+    // 3) Lookup your RecordingIconModel map
+    final rawMap = RecordingBlockController.instance.allIconMetadataById;
+
+    // 4) Build IconMetadata → count map, handling missing entries
+    return top.map((e) {
+      final rec = rawMap[e.key];
+      final meta = rec != null
+          ? IconMetadata(
+              id: rec.id,
+              label: rec.label,
+              iconPath: rec.iconPath,
+              category: IconCategory.expression,
+            )
+          : IconMetadata(
+              id: e.key,
+              label: e.key,
+              iconPath: '',
+              category: IconCategory.expression,
+            );
+      return MapEntry(meta, e.value);
+    }).toList();
   }
 }

@@ -8,14 +8,16 @@ class TTabBar extends StatelessWidget implements PreferredSizeWidget {
   const TTabBar({
     super.key,
     required this.tabs,
+    this.backgroundColor = TColors.light,
   });
   final List<Widget> tabs;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     return Material(
-      color: dark ? TColors.dark : TColors.light,
+      color: dark ? TColors.dark : backgroundColor,
       child: TabBar(
         tabs: tabs,
         isScrollable: false,

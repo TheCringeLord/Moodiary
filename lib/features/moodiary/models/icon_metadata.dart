@@ -55,3 +55,5 @@ String iconCategoryToString(IconCategory category) {
       return 'Expression';
   }
 }
+
+

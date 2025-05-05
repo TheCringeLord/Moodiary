@@ -4,6 +4,7 @@ import '../../../data/repositories/mood/recording_block_repository.dart';
 import '../models/recording_block_model.dart';
 
 import '../../../utils/popups/loaders.dart';
+import '../models/recording_icon_mode.dart';
 
 class RecordingBlockController extends GetxController {
   static RecordingBlockController get instance => Get.find();
@@ -87,6 +88,16 @@ class RecordingBlockController extends GetxController {
       print("========================================");
       TLoaders.errorSnackBar(title: "Error", message: e.toString());
     }
+  }
+
+  Map<String, RecordingIconModel> get allIconMetadataById {
+    final Map<String, RecordingIconModel> map = {};
+    for (final block in recordingBlocks) {
+      for (final icon in block.icons) {
+        map[icon.id] = icon;
+      }
+    }
+    return map;
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:moodiary/features/moodiary/controllers/recording_block_controlle
 import 'package:moodiary/utils/popups/loaders.dart';
 
 import '../../../../data/repositories/mood/recording_block_repository.dart';
+import '../../../../data/repositories/mood/mood_repository.dart';
 
 class DeleteBlockController extends GetxController {
   static DeleteBlockController get instance => Get.find();
@@ -23,14 +24,20 @@ class DeleteBlockController extends GetxController {
         return;
       }
 
+      // 1. Cascade delete all icon references from moods
+      for (final icon in block.icons) {
+        await MoodRepository.instance.removeIconReferences(icon.id);
+      }
+
+      // 2. Delete the block from Firebase
       await RecordingBlockRepository.instance.deleteBlock(blockId);
 
-      // Remove locally
+      // 3. Remove from local state
       recordingCtrl.recordingBlocks.removeWhere((b) => b.id == blockId);
 
       TLoaders.successSnackBar(
         title: "Deleted",
-        message: "Block has been deleted.",
+        message: "Block and associated icon data deleted.",
       );
     } catch (e) {
       TLoaders.errorSnackBar(title: "Error", message: e.toString());

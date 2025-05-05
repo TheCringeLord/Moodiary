@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:iconsax/iconsax.dart';
 
 import 'package:moodiary/common/widgets/appbar/appbar.dart';
@@ -11,6 +12,7 @@ import 'package:moodiary/utils/helpers/helper_functions.dart';
 import '../../../../common/widgets/appbar/tabbar.dart';
 import '../../../../utils/constants/colors.dart';
 import '../../../../utils/constants/image_strings.dart';
+import '../../controllers/recording_block_controller.dart';
 import '../../controllers/report_controller.dart';
 
 class ReportScreen extends StatelessWidget {
@@ -19,8 +21,9 @@ class ReportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final reportCtrl = Get.put(ReportController());
-    reportCtrl.loadMonthlyMoodLogs(DateTime(2025, 5));
+    Get.put(ReportController());
+    Get.put(RecordingBlockController());
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -58,7 +61,7 @@ class TMonthlyReportTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final reportCtrl = ReportController.instance;
-    final dark = THelperFunctions.isDarkMode(context);
+
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(TSizes.defaultSpace),
@@ -66,16 +69,13 @@ class TMonthlyReportTab extends StatelessWidget {
           children: [
             ///* Month Picker
             Obx(() {
-              final month = reportCtrl.selectedMonth.value;
-              final monthLabel = "${_monthName(month.month)} ${month.year}";
-
               return GestureDetector(
                 onTap: () => reportCtrl.openMonthPicker(context),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      monthLabel,
+                      reportCtrl.currentMonthLabel,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(width: TSizes.xs),
@@ -90,21 +90,171 @@ class TMonthlyReportTab extends StatelessWidget {
             const SizedBox(height: TSizes.spaceBtwSections),
 
             ///* Mood Flow Chart
+            const TMoodFlow(),
+
+            const SizedBox(height: TSizes.spaceBtwSections),
+
+            ///* Mood bar
+            const TMoodBar(),
+
+            const SizedBox(height: TSizes.spaceBtwSections),
+
+            ///* Frequently Recorded Icons
+            const TFrequentlyRecorded(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TFrequentlyRecorded extends StatelessWidget {
+  const TFrequentlyRecorded({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = ReportController.instance;
+    final dark = THelperFunctions.isDarkMode(context);
+
+    return Obx(() {
+      final items = controller.mostFrequentIcons;
+
+      // Ensure 3 entries (fill with nulls if less)
+      final padded =
+          List.generate(3, (i) => i < items.length ? items[i] : null);
+      final hasData = items.isNotEmpty;
+      final topLabel = hasData ? items.first.key.label : "Icon";
+
+      return TRoundedContainer(
+        width: double.infinity,
+        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        backgroundColor: dark ? TColors.textPrimary : TColors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Frequently Recorded",
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: TSizes.spaceBtwItems),
+
+            ///* Top 3
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(3, (index) {
+                final entry = padded[index];
+                return TFrequentlyIcon(
+                  rank: index + 1,
+                  iconPath: entry?.key.iconPath ?? '',
+                  label: entry?.key.label ?? "Icon",
+                  count: entry?.value ?? 0,
+                  isPlaceholder: entry == null,
+                );
+              }),
+            ),
+            const SizedBox(height: TSizes.spaceBtwSections),
+
+            ///* Summary
+            Center(
+              child: RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.headlineSmall,
+                  children: [
+                    const TextSpan(text: 'You recorded this '),
+                    TextSpan(
+                      text: topLabel,
+                      style: TextStyle(
+                        color: TColors.primary,
+                      ),
+                    ),
+                    const TextSpan(text: ' the most'),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+}
+
+class TFrequentlyIcon extends StatelessWidget {
+  final int rank;
+  final String iconPath;
+  final String label;
+  final int count;
+  final bool isPlaceholder;
+
+  const TFrequentlyIcon({
+    super.key,
+    required this.rank,
+    required this.iconPath,
+    required this.label,
+    required this.count,
+    this.isPlaceholder = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            ///* Card
             TRoundedContainer(
-              backgroundColor: dark ? TColors.textPrimary : TColors.white,
+              backgroundColor: dark ? TColors.dark : TColors.light,
               width: double.infinity,
-              padding: EdgeInsets.all(TSizes.spaceBtwItems),
+              padding: const EdgeInsets.all(TSizes.defaultSpace),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      Text("Mood Flow",
-                          style: Theme.of(context).textTheme.titleMedium),
-                    ],
+                  ///* Icon
+                  TRoundedContainer(
+                    width: 60,
+                    height: 60,
+                    radius: 60 / 2,
+                    backgroundColor: dark ? TColors.lightGrey : TColors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(TSizes.iconXs),
+                      child: isPlaceholder
+                          ? const Icon(Iconsax.gallery, size: 30)
+                          : Image.asset(
+                              iconPath,
+                              width: 60,
+                              height: 60,
+                            ),
+                    ),
                   ),
                   const SizedBox(height: TSizes.spaceBtwItems),
-                  const TMoodFlowChart(),
+
+                  ///* Label
+                  Text(
+                    label,
+                    style: Theme.of(context).textTheme.labelSmall,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: TSizes.spaceBtwItems),
+
+                  ///* Count
+                  Text(
+                    "x$count",
+                    style: Theme.of(context).textTheme.labelMedium,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
+              ),
+            ),
+
+            ///* Rank Badge
+            Positioned(
+              top: 9,
+              left: 14,
+              child: Text(
+                "$rank",
+                style: Theme.of(context).textTheme.labelSmall,
               ),
             ),
           ],
@@ -112,24 +262,181 @@ class TMonthlyReportTab extends StatelessWidget {
       ),
     );
   }
+}
 
-  String _monthName(int month) {
-    const months = [
-      '',
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
-    return months[month];
+class TMoodBar extends StatelessWidget {
+  const TMoodBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
+    return TRoundedContainer(
+      padding: EdgeInsets.all(TSizes.defaultSpace),
+      backgroundColor: dark ? TColors.textPrimary : TColors.white,
+      width: double.infinity,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text("Mood Bar", style: Theme.of(context).textTheme.titleMedium),
+            ],
+          ),
+          const SizedBox(height: TSizes.spaceBtwItems),
+          const TMoodBarChart(),
+        ],
+      ),
+    );
+  }
+}
+
+class TMoodBarChart extends StatelessWidget {
+  const TMoodBarChart({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = ReportController.instance;
+    final dark = THelperFunctions.isDarkMode(context);
+
+    final moodIcons = {
+      'veryHappy': TImages.veryHappy,
+      'happy': TImages.happy,
+      'neutral': TImages.neutral,
+      'unhappy': TImages.unHappy,
+      'sad': TImages.sad,
+    };
+
+    final segmentColors = {
+      'veryHappy': const Color.fromARGB(255, 54, 192, 125),
+      'happy': const Color.fromARGB(255, 118, 226, 230),
+      'neutral': const Color.fromARGB(255, 255, 206, 59),
+      'unhappy': const Color.fromARGB(255, 243, 160, 66),
+      'sad': const Color.fromARGB(255, 233, 112, 112),
+    };
+
+    return Obx(() {
+      final moods = controller.moods;
+      final total = moods.length;
+
+      // Initialize counts and percentages
+      final counts = <String, int>{};
+      final moodKeys = moodIcons.keys.toList();
+      moodKeys.forEach((key) => counts[key] = 0);
+
+      for (final m in moods) {
+        counts[m.mainMood] = (counts[m.mainMood] ?? 0) + 1;
+      }
+
+      final percentages =
+          counts.map((k, v) => MapEntry(k, total > 0 ? v / total : 0.0));
+
+      // Find the mood with the highest percentage
+      final double maxPct =
+          percentages.values.fold(0.0, (prev, v) => v > prev ? v : prev);
+      final highestMoods = percentages.entries
+          .where((entry) => entry.value == maxPct && maxPct > 0)
+          .map((entry) => entry.key)
+          .toSet();
+
+      // Build segments
+      const totalFlex = 1000;
+      final segments = moodKeys.map((key) {
+        final pct = percentages[key]!;
+        final flex = (pct * totalFlex).round();
+        final color = pct > 0 ? segmentColors[key]! : Colors.grey.shade400;
+
+        return Expanded(
+          flex: flex > 0 ? flex : 1,
+          child: Container(
+            height: 40,
+            color: color,
+          ),
+        );
+      }).toList();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Icons and percentage labels
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: moodKeys.map((key) {
+              final pct = (percentages[key]! * 100).round();
+              final isZero = pct == 0;
+              final isMax = highestMoods.contains(key);
+
+              return Column(
+                children: [
+                  ClipOval(
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.mode(
+                        isZero ? Colors.grey : Colors.transparent,
+                        BlendMode.saturation,
+                      ),
+                      child:
+                          Image.asset(moodIcons[key]!, width: 50, height: 50),
+                    ),
+                  ),
+                  const SizedBox(height: TSizes.spaceBtwItems),
+                  TRoundedContainer(
+                    width: 50,
+                    backgroundColor: isMax
+                        ? segmentColors[key]!.withAlpha(50)
+                        : dark
+                            ? const Color.fromARGB(255, 76, 78, 100)
+                            : TColors.grey,
+                    child: Center(
+                      child: Text(
+                        "$pct%",
+                        style: Theme.of(context).textTheme.labelSmall!.apply(
+                              color: isMax
+                                  ? segmentColors[key]!
+                                  : dark
+                                      ? const Color.fromARGB(255, 138, 143, 163)
+                                      : TColors.darkGrey,
+                            ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: TSizes.spaceBtwItems),
+          // Bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Row(children: segments),
+          ),
+        ],
+      );
+    });
+  }
+}
+
+class TMoodFlow extends StatelessWidget {
+  const TMoodFlow({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
+    return TRoundedContainer(
+      backgroundColor: dark ? TColors.textPrimary : TColors.white,
+      width: double.infinity,
+      padding: EdgeInsets.all(TSizes.defaultSpace),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text("Mood Flow", style: Theme.of(context).textTheme.titleMedium),
+            ],
+          ),
+          const SizedBox(height: TSizes.spaceBtwItems),
+          const TMoodFlowChart(),
+        ],
+      ),
+    );
   }
 }
 

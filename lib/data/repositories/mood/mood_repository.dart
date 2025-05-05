@@ -153,4 +153,69 @@ class MoodRepository extends GetxController {
     if (qs.docs.isEmpty) return null;
     return MoodModel.fromDocumentSnapshot(qs.docs.first);
   }
+
+  /// Remove all references of [iconId] from every array‐field in your moods
+  Future<void> removeIconReferences(String iconId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) throw Exception("Not authenticated");
+
+    final col = _db.collection('users').doc(user.uid).collection('moods');
+    final snapshot = await col.get();
+
+    final batch = _db.batch();
+
+    for (final doc in snapshot.docs) {
+      final data = doc.data();
+
+      Map<String, dynamic> updatedFields = {};
+      bool hasChanged = false;
+
+      // Remove from known predefined fields
+      for (final field in [
+        'emotions',
+        'weather',
+        'people',
+        'hobbies',
+        'work',
+        'health',
+        'chores',
+        'relationship',
+        'other',
+      ]) {
+        final icons = List<String>.from(data[field] ?? []);
+        if (icons.contains(iconId)) {
+          updatedFields[field] = FieldValue.arrayRemove([iconId]);
+          hasChanged = true;
+        }
+      }
+
+      // Remove from customBlocks
+      if (data['customBlocks'] != null && data['customBlocks'] is Map) {
+        final custom = Map<String, dynamic>.from(data['customBlocks']);
+        final newCustom = <String, List<String>>{};
+        bool customChanged = false;
+
+        for (final entry in custom.entries) {
+          final list = List<String>.from(entry.value);
+          if (list.contains(iconId)) {
+            list.remove(iconId);
+            customChanged = true;
+          }
+          newCustom[entry.key] = list;
+        }
+
+        if (customChanged) {
+          updatedFields['customBlocks'] = newCustom;
+          hasChanged = true;
+        }
+      }
+
+      // Commit update only if any field changed
+      if (hasChanged) {
+        batch.update(doc.reference, updatedFields);
+      }
+    }
+
+    await batch.commit();
+  }
 }

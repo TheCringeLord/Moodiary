@@ -136,7 +136,7 @@ class TActiveBlockTab extends StatelessWidget {
                   ctrl.blockName.clear(); // reset
 
                   showModalBottomSheet(
-                    backgroundColor: dark ? TColors.dark : TColors.light,
+                    backgroundColor: dark ? TColors.dark : TColors.white,
                     context: context,
                     isScrollControlled: true,
                     shape: const RoundedRectangleBorder(
@@ -241,11 +241,10 @@ class TNotesBlockCustomize extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () {
-                      final isSpecial = block.isSpecial;
                       final isHidden = block.isHidden;
 
                       showModalBottomSheet(
-                        backgroundColor: dark ? TColors.dark : TColors.light,
+                        backgroundColor: dark ? TColors.dark : TColors.white,
                         context: context,
                         shape: const RoundedRectangleBorder(
                           borderRadius:
@@ -268,39 +267,6 @@ class TNotesBlockCustomize extends StatelessWidget {
                                       .toggleVisibility(block.id, !isHidden);
                                 },
                               ),
-                              if (!isSpecial)
-                                ListTile(
-                                  leading: const Icon(
-                                    Iconsax.trash,
-                                    color: TColors.error,
-                                  ),
-                                  title: const Text(
-                                    "Delete Block",
-                                    style: TextStyle(
-                                      color: TColors.error,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Get.back();
-                                    Get.defaultDialog(
-                                      contentPadding: const EdgeInsets.all(
-                                          TSizes.defaultSpace),
-                                      titlePadding: const EdgeInsets.all(
-                                          TSizes.defaultSpace),
-                                      title: "Confirm Delete",
-                                      middleText:
-                                          "Are you sure you want to delete this block?\nThis action cannot be undone.",
-                                      textCancel: "Cancel",
-                                      textConfirm: "Delete",
-                                      confirmTextColor: Colors.white,
-                                      onConfirm: () {
-                                        Get.back(); // Close dialog
-                                        DeleteBlockController.instance
-                                            .deleteBlock(block.id);
-                                      },
-                                    );
-                                  },
-                                ),
                             ],
                           ),
                         ),
@@ -365,11 +331,10 @@ class TSleepBlockCustomize extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () {
-                      final isSpecial = block.isSpecial;
                       final isHidden = block.isHidden;
 
                       showModalBottomSheet(
-                        backgroundColor: dark ? TColors.dark : TColors.light,
+                        backgroundColor: dark ? TColors.dark : TColors.white,
                         context: context,
                         shape: const RoundedRectangleBorder(
                           borderRadius:
@@ -392,39 +357,6 @@ class TSleepBlockCustomize extends StatelessWidget {
                                       .toggleVisibility(block.id, !isHidden);
                                 },
                               ),
-                              if (!isSpecial)
-                                ListTile(
-                                  leading: const Icon(
-                                    Iconsax.trash,
-                                    color: TColors.error,
-                                  ),
-                                  title: const Text(
-                                    "Delete Block",
-                                    style: TextStyle(
-                                      color: TColors.error,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Get.back();
-                                    Get.defaultDialog(
-                                      contentPadding: const EdgeInsets.all(
-                                          TSizes.defaultSpace),
-                                      titlePadding: const EdgeInsets.all(
-                                          TSizes.defaultSpace),
-                                      title: "Confirm Delete",
-                                      middleText:
-                                          "Are you sure you want to delete this block?\nThis action cannot be undone.",
-                                      textCancel: "Cancel",
-                                      textConfirm: "Delete",
-                                      confirmTextColor: Colors.white,
-                                      onConfirm: () {
-                                        Get.back(); // Close dialog
-                                        DeleteBlockController.instance
-                                            .deleteBlock(block.id);
-                                      },
-                                    );
-                                  },
-                                ),
                             ],
                           ),
                         ),
@@ -510,7 +442,7 @@ class TCustomizeRecordingBlock extends StatelessWidget {
                     onPressed: () {
                       updateCtrl.initializeName(block);
                       showModalBottomSheet(
-                        backgroundColor: dark ? TColors.dark : TColors.light,
+                        backgroundColor: dark ? TColors.dark : TColors.white,
                         context: context,
                         isScrollControlled: true,
                         shape: const RoundedRectangleBorder(
@@ -541,7 +473,7 @@ class TCustomizeRecordingBlock extends StatelessWidget {
 
                       showModalBottomSheet(
                         context: context,
-                        backgroundColor: dark ? TColors.dark : TColors.light,
+                        backgroundColor: dark ? TColors.dark : TColors.white,
                         shape: const RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.vertical(top: Radius.circular(20)),
@@ -576,23 +508,10 @@ class TCustomizeRecordingBlock extends StatelessWidget {
                                     ),
                                   ),
                                   onTap: () {
-                                    Get.back();
-                                    Get.defaultDialog(
-                                      contentPadding: const EdgeInsets.all(
-                                          TSizes.defaultSpace),
-                                      titlePadding: const EdgeInsets.all(
-                                          TSizes.defaultSpace),
-                                      title: "Confirm Delete",
-                                      middleText:
-                                          "Are you sure you want to delete this block?\nThis action cannot be undone.",
-                                      textCancel: "Cancel",
-                                      textConfirm: "Delete",
-                                      confirmTextColor: Colors.white,
-                                      onConfirm: () {
-                                        Get.back(); // Close dialog
-                                        DeleteBlockController.instance
-                                            .deleteBlock(block.id);
-                                      },
+                                    Get.back(); // Close context menu or bottom sheet
+
+                                    Get.dialog(
+                                      TDialog(block: block),
                                     );
                                   },
                                 ),
@@ -632,6 +551,74 @@ class TCustomizeRecordingBlock extends StatelessWidget {
   }
 }
 
+class TDialog extends StatelessWidget {
+  const TDialog({
+    super.key,
+    required this.block,
+  });
+
+  final RecordingBlockModel block;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
+      ),
+      backgroundColor: dark ? TColors.dark : TColors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Delete Block?",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: TSizes.spaceBtwItems),
+            Text(
+              "This will permanently delete the block and all related records.",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: TSizes.spaceBtwItems),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey,
+                    ),
+                    onPressed: () => Get.back(),
+                    child: const Text("Cancel"),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: TColors.error,
+                      side: BorderSide(
+                        color: TColors.error,
+                      ),
+                    ),
+                    onPressed: () {
+                      Get.back(); // Close dialog
+                      DeleteBlockController.instance.deleteBlock(block.id);
+                    },
+                    child: const Text("Delete"),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class TCustomizeRecordingIcon extends StatelessWidget {
   final RecordingIconModel icon;
   final String blockId;
@@ -650,7 +637,7 @@ class TCustomizeRecordingIcon extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
-          backgroundColor: dark ? TColors.dark : TColors.light,
+          backgroundColor: dark ? TColors.dark : TColors.white,
           context: context,
           isScrollControlled: true,
           shape: const RoundedRectangleBorder(
@@ -716,7 +703,7 @@ class _TEditIconDialog extends StatelessWidget {
             ///TODO: Add icon picker using TPredefinedIconPicker
             onTap: () {
               showModalBottomSheet<IconMetadata>(
-                backgroundColor: dark ? TColors.dark : TColors.light,
+                backgroundColor: dark ? TColors.dark : TColors.white,
                 context: context,
                 isScrollControlled: true,
                 shape: const RoundedRectangleBorder(
@@ -812,10 +799,68 @@ class _TEditIconDialog extends StatelessWidget {
               Expanded(
                 child: TextButton.icon(
                   onPressed: () {
-                    IconBlockController.instance
-                        .deleteIconFromBlock(blockId, icon.id);
-                    iconCtrl.resetTempIconPath(); // ✅ Clean up
-                    Get.back();
+                    Get.back(); // Close context menu or bottom sheet
+
+                    Get.dialog(
+                      Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(TSizes.cardRadiusLg),
+                        ),
+                        backgroundColor: dark ? TColors.dark : TColors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(TSizes.defaultSpace),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Are you sure?",
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: TSizes.spaceBtwItems),
+                              Text(
+                                "This will permanently delete the icon and all related records.",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              const SizedBox(height: TSizes.spaceBtwItems),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.grey,
+                                      ),
+                                      onPressed: () => Get.back(),
+                                      child: const Text("Cancel"),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: TColors.error,
+                                        side: BorderSide(
+                                          color: TColors.error,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Get.back();
+                                        IconBlockController.instance
+                                            .deleteIconFromBlock(
+                                                blockId, icon.id);
+                                        iconCtrl.resetTempIconPath();
+                                      },
+                                      child: const Text("Delete"),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
                   },
                   icon: const Icon(Iconsax.trash, color: TColors.error),
                   label: Text(
@@ -868,7 +913,7 @@ class TAddIconButton extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         showModalBottomSheet<IconMetadata>(
-          backgroundColor: dark ? TColors.dark : TColors.light,
+          backgroundColor: dark ? TColors.dark : TColors.white,
           context: context,
           isScrollControlled: true,
           shape: const RoundedRectangleBorder(
@@ -883,7 +928,7 @@ class TAddIconButton extends StatelessWidget {
             final formKey = GlobalKey<FormState>();
 
             showModalBottomSheet(
-              backgroundColor: dark ? TColors.dark : TColors.light,
+              backgroundColor: dark ? TColors.dark : TColors.white,
               context: context,
               isScrollControlled: true,
               shape: const RoundedRectangleBorder(
@@ -940,6 +985,7 @@ class TPredefinedIconPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categories = getIconCategories();
+    final dark = THelperFunctions.isDarkMode(context);
     return FractionallySizedBox(
       heightFactor: 0.8,
       child: DefaultTabController(
@@ -955,6 +1001,7 @@ class TPredefinedIconPicker extends StatelessWidget {
               ),
               const SizedBox(height: TSizes.spaceBtwSections),
               TTabBar(
+                backgroundColor: TColors.white,
                 tabs: categories.map((c) {
                   return Tab(text: iconCategoryToString(c));
                 }).toList(),
@@ -985,7 +1032,8 @@ class TPredefinedIconPicker extends StatelessWidget {
                             width: 60,
                             height: 60,
                             radius: 30,
-                            backgroundColor: TColors.white,
+                            backgroundColor:
+                                dark ? TColors.white : TColors.light,
                             child: Padding(
                               padding: const EdgeInsets.all(TSizes.xs),
                               child: Image.asset(

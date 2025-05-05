@@ -4,7 +4,7 @@ import 'package:moodiary/data/repositories/mood/recording_block_repository.dart'
 import 'package:moodiary/features/moodiary/controllers/recording_block_controller.dart';
 import 'package:moodiary/features/moodiary/models/recording_icon_mode.dart';
 
-
+import '../../../data/repositories/mood/mood_repository.dart';
 import '../models/icon_metadata.dart';
 
 class IconBlockController extends GetxController {
@@ -57,16 +57,21 @@ class IconBlockController extends GetxController {
         .updateBlock(recordingBlockController.recordingBlocks[index]);
   }
 
-  void deleteIconFromBlock(String blockId, String iconId) {
+  Future<void> deleteIconFromBlock(String blockId, String iconId) async {
     final index = recordingBlockController.recordingBlocks
         .indexWhere((b) => b.id == blockId);
     if (index == -1) return;
 
-    recordingBlockController.recordingBlocks[index].icons
-        .removeWhere((i) => i.id == iconId);
-    recordingBlockController.recordingBlocks.refresh();
+    final block = recordingBlockController.recordingBlocks[index];
+    block.icons.removeWhere((i) => i.id == iconId);
 
-    RecordingBlockRepository.instance
-        .updateBlock(recordingBlockController.recordingBlocks[index]);
+    // Persist deletion on block
+    await RecordingBlockRepository.instance.updateBlock(block);
+
+    // Cascade-remove from all mood logs
+    await MoodRepository.instance.removeIconReferences(iconId);
+
+    // Refresh UI
+    recordingBlockController.recordingBlocks.refresh();
   }
 }
