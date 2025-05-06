@@ -16,7 +16,9 @@ class MoodModel {
   final List<String>? relationship;
   final List<String>? other;
   final Map<String, List<String>>? customBlocks;
-  final int? sleepDuration;
+
+  final DateTime? sleepStart;
+  final DateTime? sleepEnd;
   final String? exercise;
   final int? steps;
   final int? menstruationDay;
@@ -41,7 +43,8 @@ class MoodModel {
     this.relationship,
     this.other,
     this.customBlocks,
-    this.sleepDuration,
+    this.sleepStart,
+    this.sleepEnd,
     this.exercise,
     this.steps,
     this.menstruationDay,
@@ -68,7 +71,8 @@ class MoodModel {
       'relationship': relationship,
       'other': other,
       'customBlocks': customBlocks,
-      'sleepDuration': sleepDuration,
+      'sleepStart': sleepStart != null ? Timestamp.fromDate(sleepStart!) : null,
+      'sleepEnd': sleepEnd != null ? Timestamp.fromDate(sleepEnd!) : null,
       'exercise': exercise,
       'steps': steps,
       'menstruationDay': menstruationDay,
@@ -113,7 +117,12 @@ class MoodModel {
               ),
             )
           : null,
-      sleepDuration: map['sleepDuration'],
+      sleepStart: (map['sleepStart'] != null)
+          ? (map['sleepStart'] as Timestamp).toDate()
+          : null,
+      sleepEnd: (map['sleepEnd'] != null)
+          ? (map['sleepEnd'] as Timestamp).toDate()
+          : null,
       exercise: map['exercise'],
       steps: map['steps'],
       menstruationDay: map['menstruationDay'],
@@ -147,7 +156,8 @@ class MoodModel {
     List<String>? relationship,
     List<String>? other,
     Map<String, List<String>>? customBlocks,
-    int? sleepDuration,
+    DateTime? sleepStart,
+    DateTime? sleepEnd,
     String? exercise,
     int? steps,
     int? menstruationDay,
@@ -171,7 +181,6 @@ class MoodModel {
       relationship: relationship ?? this.relationship,
       other: other ?? this.other,
       customBlocks: customBlocks ?? this.customBlocks,
-      sleepDuration: sleepDuration ?? this.sleepDuration,
       exercise: exercise ?? this.exercise,
       steps: steps ?? this.steps,
       menstruationDay: menstruationDay ?? this.menstruationDay,
@@ -197,9 +206,13 @@ class MoodModel {
         (customBlocks != null && customBlocks!.isNotEmpty);
   }
 
+  double get sleepDurationInHours {
+    if (sleepStart == null || sleepEnd == null) return 0;
+    return sleepEnd!.difference(sleepStart!).inMinutes / 60.0;
+  }
+
   bool get hasNotes => note != null && note!.isNotEmpty;
   bool get hasPhotos => photos != null && photos!.isNotEmpty;
-  int? get sleepHours => sleepDuration == null ? null : (sleepDuration! ~/ 60);
 
   int get moodScore {
     switch (mainMood) {

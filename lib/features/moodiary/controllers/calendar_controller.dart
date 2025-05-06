@@ -178,7 +178,8 @@ class CalendarController extends GetxController {
       //* We have a logged mood → print all its info and stop
       print("=== Mood details for $date ===");
       print("Main Mood     : ${existing.mainMood}");
-      print("Sleep Duration: ${existing.sleepDuration} min");
+      print("Sleep         : ${existing.sleepStart} - ${existing.sleepEnd}");
+      print("Sleep Duration: ${existing.sleepDurationInHours} Hours");
       print("Notes         : ${existing.note}");
       print("Emotions      : ${existing.emotions}");
       print("People        : ${existing.people}");

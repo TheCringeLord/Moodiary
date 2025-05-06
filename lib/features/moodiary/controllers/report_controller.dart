@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moodiary/utils/constants/sizes.dart';
 
-
 import '../../../data/repositories/mood/mood_repository.dart';
 import '../../../utils/constants/enums.dart';
 import '../models/icon_metadata.dart';
@@ -16,7 +15,8 @@ class ReportController extends GetxController {
   final selectedMonth = DateTime.now().obs;
   final RxList<MoodModel> moods = <MoodModel>[].obs;
   final RxList<FlSpot> spots = <FlSpot>[].obs;
-
+  final Rx<TimeOfDay?> avgBedtime = Rx<TimeOfDay?>(null);
+  final Rx<TimeOfDay?> avgWakeUp = Rx<TimeOfDay?>(null);
   @override
   void onInit() {
     super.onInit();
@@ -30,10 +30,9 @@ class ReportController extends GetxController {
     selectedMonth.value = month;
     final moodList = await MoodRepository.instance.getMoodsByMonth(month).first;
     moods.assignAll(moodList);
-    final moodSpots = moodList
-        .map((m) => FlSpot(m.date.day.toDouble(), m.moodScore.toDouble()))
-        .toList();
-    spots.assignAll(moodSpots);
+    spots.assignAll(moodList
+        .map((m) => FlSpot(m.date.day.toDouble(), m.moodScore.toDouble())));
+    calculateAverageSleepTimes(moodList);
   }
 
   ///* Month name for UI (e.g. May 2025)
@@ -173,5 +172,28 @@ class ReportController extends GetxController {
             );
       return MapEntry(meta, e.value);
     }).toList();
+  }
+
+  void calculateAverageSleepTimes(List<MoodModel> moods) {
+    final sleepStartTimes = moods
+        .where((m) => m.sleepStart != null)
+        .map((m) => m.sleepStart!)
+        .toList();
+    final sleepEndTimes =
+        moods.where((m) => m.sleepEnd != null).map((m) => m.sleepEnd!).toList();
+
+    if (sleepStartTimes.isNotEmpty) {
+      final totalStartMinutes =
+          sleepStartTimes.fold(0, (sum, dt) => sum + dt.hour * 60 + dt.minute);
+      final avgStart = totalStartMinutes ~/ sleepStartTimes.length;
+      avgBedtime.value = TimeOfDay(hour: avgStart ~/ 60, minute: avgStart % 60);
+    }
+
+    if (sleepEndTimes.isNotEmpty) {
+      final totalEndMinutes =
+          sleepEndTimes.fold(0, (sum, dt) => sum + dt.hour * 60 + dt.minute);
+      final avgEnd = totalEndMinutes ~/ sleepEndTimes.length;
+      avgWakeUp.value = TimeOfDay(hour: avgEnd ~/ 60, minute: avgEnd % 60);
+    }
   }
 }

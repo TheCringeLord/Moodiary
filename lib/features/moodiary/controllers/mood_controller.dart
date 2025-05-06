@@ -116,14 +116,27 @@ class MoodController extends GetxController {
         other: getSelectedIcons("other"),
         customBlocks: getCustomBlocksMap(),
         note: notes.text.trim(),
-        sleepDuration: sleepDurationInMinutes,
+        sleepStart: isSleepSaved.value
+            ? DateTime(date.year, date.month, date.day, sleepStart.value.hour,
+                sleepStart.value.minute)
+            : null,
+        sleepEnd: isSleepSaved.value
+            ? DateTime(
+                date.year,
+                date.month,
+                sleepEnd.value.hour < sleepStart.value.hour
+                    ? date.day + 1
+                    : date.day,
+                sleepEnd.value.hour,
+                sleepEnd.value.minute)
+            : null,
         photos: [],
       );
 
       print("==========================");
       print("Mood ID: ${mood.id}");
       print("Main Mood: ${mood.mainMood}");
-      print("Sleep Duration: ${mood.sleepDuration} minutes");
+      print("Sleep Time: ${mood.sleepStart} - ${mood.sleepEnd}");
       print("==========================");
 
       // Save to Firestore

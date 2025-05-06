@@ -101,9 +101,414 @@ class TMonthlyReportTab extends StatelessWidget {
 
             ///* Frequently Recorded Icons
             const TFrequentlyRecorded(),
+
+            const SizedBox(height: TSizes.spaceBtwSections),
+
+            ///* Sleep Analysis
+            const TSleepAnalysis(),
           ],
         ),
       ),
+    );
+  }
+}
+
+class TSleepAnalysis extends StatelessWidget {
+  const TSleepAnalysis({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
+    final reportCtrl = ReportController.instance;
+    return TRoundedContainer(
+      padding: EdgeInsets.all(TSizes.defaultSpace),
+      backgroundColor: dark ? TColors.textPrimary : TColors.white,
+      width: double.infinity,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text("Sleep Analysis",
+                  style: Theme.of(context).textTheme.titleMedium),
+            ],
+          ),
+          const SizedBox(height: TSizes.spaceBtwItems),
+
+          ///TODO: SHow Average Sleep Time
+          Obx(
+            () {
+              final bedtime = reportCtrl.avgBedtime.value;
+              final wakeUp = reportCtrl.avgWakeUp.value;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TRoundedContainer(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(TSizes.spaceBtwItems),
+                      backgroundColor:
+                          dark ? TColors.textPrimary : TColors.white,
+                      showBorder: true,
+                      borderColor: dark ? TColors.textSecondary : TColors.grey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Bedtime",
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                          Text(
+                            bedtime != null ? bedtime.format(context) : "--:--",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: TSizes.spaceBtwItems),
+                  Expanded(
+                    child: TRoundedContainer(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(TSizes.spaceBtwItems),
+                      backgroundColor:
+                          dark ? TColors.textPrimary : TColors.white,
+                      showBorder: true,
+                      borderColor: dark ? TColors.textSecondary : TColors.grey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Wake Up",
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                          Text(
+                            wakeUp != null ? wakeUp.format(context) : "--:--",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: TSizes.spaceBtwSections),
+
+          ///* Sleep Graph
+          Padding(
+            padding: const EdgeInsets.only(right: TSizes.defaultSpace),
+            child: TSleepAnalysisGraph(),
+          ),
+
+          const SizedBox(height: TSizes.spaceBtwItems),
+
+          ///* Sleep Durations
+          Obx(
+            () {
+              final controller = ReportController.instance;
+              final selectedMonth = controller.selectedMonth.value;
+              final moods = controller.moods;
+
+              final daysInMonth = DateUtils.getDaysInMonth(
+                  selectedMonth.year, selectedMonth.month);
+
+              // Filter moods with sleep data
+              final sleepMoods = moods
+                  .where((m) => m.sleepStart != null && m.sleepEnd != null)
+                  .toList();
+
+              // Count categories
+              int lessThan6h = 0;
+              int between6and8h = 0;
+              int over8h = 0;
+
+              for (var mood in sleepMoods) {
+                final start = mood.sleepStart!;
+                final end = mood.sleepEnd!;
+
+                double startHour = start.hour + start.minute / 60.0;
+                double endHour = end.hour + end.minute / 60.0;
+
+                if (endHour < startHour) endHour += 24; // handle overnight
+                final duration = endHour - startHour;
+
+                if (duration < 6) {
+                  lessThan6h++;
+                } else if (duration <= 8) {
+                  between6and8h++;
+                } else {
+                  over8h++;
+                }
+              }
+
+              // Calculate No Record as: daysInMonth - recorded days
+              final recordedDays =
+                  sleepMoods.map((m) => m.date.day).toSet().length;
+              final noRecord = daysInMonth - recordedDays;
+
+              return TRoundedContainer(
+                width: double.infinity,
+                padding: EdgeInsets.all(TSizes.spaceBtwItems),
+                backgroundColor: dark ? TColors.textPrimary : TColors.white,
+                showBorder: true,
+                borderColor: dark ? TColors.textSecondary : TColors.grey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TSleepHourDuration(
+                      text: "Less than 6h",
+                      color: const Color(0xFF7B61FF),
+                      totalDay: "$lessThan6h",
+                      dayInMonth: "$daysInMonth",
+                    ),
+                    const SizedBox(height: TSizes.sm),
+                    TSleepHourDuration(
+                      text: "6 - 8h",
+                      color: const Color(0xFF6D9EFF),
+                      totalDay: "$between6and8h",
+                      dayInMonth: "$daysInMonth",
+                    ),
+                    const SizedBox(height: TSizes.sm),
+                    TSleepHourDuration(
+                      text: "Over 8h",
+                      color: const Color(0xFF9CD1FF),
+                      totalDay: "$over8h",
+                      dayInMonth: "$daysInMonth",
+                    ),
+                    const SizedBox(height: TSizes.sm),
+                    TSleepHourDuration(
+                      text: "No Record",
+                      color: TColors.darkGrey,
+                      totalDay: "$noRecord",
+                      dayInMonth: "$daysInMonth",
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TSleepAnalysisGraph extends StatelessWidget {
+  const TSleepAnalysisGraph({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = ReportController.instance;
+    final dark = THelperFunctions.isDarkMode(context);
+
+    return Obx(() {
+      final selectedMonth = controller.selectedMonth.value;
+      final daysInMonth =
+          DateUtils.getDaysInMonth(selectedMonth.year, selectedMonth.month);
+      final sleepList = controller.moods
+          .where((m) => m.sleepStart != null && m.sleepEnd != null)
+          .toList();
+
+      if (sleepList.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text("No sleep data",
+                style: Theme.of(context).textTheme.bodyMedium),
+          ),
+        );
+      }
+
+      return SizedBox(
+        height: 300,
+        child: BarChart(
+          BarChartData(
+            alignment: BarChartAlignment.spaceBetween,
+            minY: 0,
+            maxY: 24,
+            gridData: FlGridData(
+              show: true,
+              drawVerticalLine: false,
+              horizontalInterval: 4,
+              getDrawingHorizontalLine: (y) => FlLine(
+                color: dark
+                    ? TColors.textSecondary.withAlpha(120)
+                    : TColors.grey.withAlpha(120),
+                strokeWidth: 1,
+              ),
+            ),
+            borderData: FlBorderData(
+                show: true,
+                border: Border.all(
+                  color: dark
+                      ? TColors.textSecondary.withAlpha(120)
+                      : TColors.grey.withAlpha(120),
+                )),
+            titlesData: FlTitlesData(
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  interval: 1,
+                  reservedSize: 58,
+                  getTitlesWidget: (value, _) {
+                    final day = value.toInt();
+                    final baseTicks = [1, 6, 11, 16, 21];
+                    final ticks = [
+                      ...baseTicks,
+                      if (daysInMonth >= 30) 26,
+                      daysInMonth,
+                    ];
+                    if (ticks.contains(day)) {
+                      final month = controller.selectedMonth.value.month;
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Text(
+                          "$month/$day",
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  interval: 6,
+                  reservedSize: 58,
+                  getTitlesWidget: (value, _) {
+                    final hour = value.toInt();
+                    if (hour % 6 != 0 || hour > 24) {
+                      return const SizedBox.shrink();
+                    }
+                    String label;
+                    if (hour == 0 || hour == 24) {
+                      label = '12AM';
+                    } else if (hour < 12) {
+                      label = '${hour}AM';
+                    } else if (hour == 12) {
+                      label = '12PM';
+                    } else {
+                      label = '${hour - 12}PM';
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(right: TSizes.xs),
+                      child: Text(label,
+                          style: Theme.of(context).textTheme.labelMedium),
+                    );
+                  },
+                ),
+              ),
+              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              rightTitles:
+                  AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            ),
+            barTouchData: BarTouchData(enabled: false),
+            barGroups: List.generate(daysInMonth, (index) {
+              final day = index + 1;
+              final mood = sleepList.firstWhereOrNull((m) => m.date.day == day);
+
+              if (mood == null) {
+                // Render an invisible gap (no bar rod)
+                return BarChartGroupData(x: day, barRods: []);
+              }
+
+              final start = mood.sleepStart!;
+              final end = mood.sleepEnd!;
+
+              double startHour = start.hour + start.minute / 60.0;
+              double endHour = end.hour + end.minute / 60.0;
+
+              if (endHour < startHour) endHour += 24;
+              final duration = endHour - startHour;
+
+              final displayStart = startHour % 24;
+              final displayEnd = endHour % 24;
+
+              Color barColor;
+              if (duration < 6) {
+                barColor = const Color(0xFF7B61FF); // red
+              } else if (duration <= 8) {
+                barColor = const Color(0xFF6D9EFF); // cyan
+              } else {
+                barColor = const Color(0xFF9CD1FF); // green
+              }
+
+              return BarChartGroupData(
+                x: day,
+                barRods: [
+                  BarChartRodData(
+                    fromY: displayStart,
+                    toY: displayEnd,
+                    width: 6,
+                    color: barColor,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ],
+              );
+            }),
+          ),
+        ),
+      );
+    });
+  }
+}
+
+class TSleepHourDuration extends StatelessWidget {
+  const TSleepHourDuration({
+    super.key,
+    required this.text,
+    required this.color,
+    required this.totalDay,
+    required this.dayInMonth,
+  });
+
+  final String text;
+  final Color color;
+  final String totalDay;
+  final String dayInMonth;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Row(
+          children: [
+            TRoundedContainer(
+              padding: EdgeInsets.all(TSizes.sm),
+              height: 20,
+              width: 20,
+              radius: TSizes.cardRadiusXs,
+              backgroundColor: color,
+            ),
+            const SizedBox(width: TSizes.sm),
+            Text(text, style: Theme.of(context).textTheme.labelSmall),
+          ],
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
+            child: Divider(
+              color: TColors.grey.withAlpha(100),
+              height: TSizes.sm,
+              thickness: 1,
+            ),
+          ),
+        ),
+        Row(
+          children: [
+            Text(totalDay, style: Theme.of(context).textTheme.labelSmall),
+            Text(
+              " / $dayInMonth",
+              style: Theme.of(context).textTheme.labelSmall!.apply(
+                    color: TColors.darkGrey,
+                  ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -220,7 +625,9 @@ class TFrequentlyIcon extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(TSizes.iconXs),
                       child: isPlaceholder
-                          ? const Icon(Iconsax.gallery, size: 30)
+                          ? Icon(Iconsax.gallery,
+                              size: 30,
+                              color: dark ? TColors.darkGrey : TColors.grey)
                           : Image.asset(
                               iconPath,
                               width: 60,
@@ -320,7 +727,9 @@ class TMoodBarChart extends StatelessWidget {
       // Initialize counts and percentages
       final counts = <String, int>{};
       final moodKeys = moodIcons.keys.toList();
-      moodKeys.forEach((key) => counts[key] = 0);
+      for (var key in moodKeys) {
+        counts[key] = 0;
+      }
 
       for (final m in moods) {
         counts[m.mainMood] = (counts[m.mainMood] ?? 0) + 1;
@@ -447,7 +856,7 @@ class TMoodFlowChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = ReportController.instance;
     final dark = THelperFunctions.isDarkMode(context);
-    // Mood icon and color maps
+
     final moodColors = {
       5: Colors.greenAccent.shade100,
       4: Colors.lightBlueAccent,
@@ -466,13 +875,26 @@ class TMoodFlowChart extends StatelessWidget {
 
     return Obx(() {
       final moodSpots = controller.spots;
+      final selectedMonth = controller.selectedMonth.value;
+      final month = selectedMonth.month;
+      final daysInMonth =
+          DateUtils.getDaysInMonth(selectedMonth.year, selectedMonth.month);
+      if (moodSpots.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text("No data to show",
+                style: Theme.of(context).textTheme.bodyMedium),
+          ),
+        );
+      }
 
       return SizedBox(
         height: 240,
         child: LineChart(
           LineChartData(
-            minX: 0,
-            maxX: 32,
+            minX: 1,
+            maxX: daysInMonth.toDouble(),
             minY: 0.5,
             maxY: 5.5,
             clipData: FlClipData.none(),
@@ -497,14 +919,20 @@ class TMoodFlowChart extends StatelessWidget {
                   reservedSize: 32,
                   getTitlesWidget: (value, _) {
                     final int day = value.toInt();
-                    if ([1, 6, 11, 16, 21, 26, 31].contains(day)) {
-                      final month = controller.selectedMonth.value.month;
+                    final baseTicks = [1, 6, 11, 16, 21];
+                    final ticks = [
+                      ...baseTicks,
+                      if (daysInMonth >= 30) 26,
+                      daysInMonth,
+                    ];
+
+                    if (ticks.contains(day)) {
                       return Padding(
                         padding: const EdgeInsets.only(top: 6, right: 15),
                         child: Center(
                           child: Text("$month/$day",
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodySmall),
+                              style: Theme.of(context).textTheme.labelMedium),
                         ),
                       );
                     }
@@ -520,10 +948,8 @@ class TMoodFlowChart extends StatelessWidget {
                     if (value % 1 != 0 || value < 1 || value > 5) {
                       return const SizedBox.shrink();
                     }
-
                     final path = moodIcons[value.toInt()];
                     if (path == null) return const SizedBox.shrink();
-
                     return Image.asset(path, width: 24, height: 24);
                   },
                 ),
@@ -535,7 +961,7 @@ class TMoodFlowChart extends StatelessWidget {
             lineBarsData: [
               LineChartBarData(
                 spots: moodSpots,
-                isCurved: false,
+                isCurved: true,
                 color: dark
                     ? const Color.fromARGB(255, 44, 221, 192)
                     : Colors.blue.shade100,
