@@ -35,7 +35,6 @@ class TSleepPickerDialog extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ///TODO: Decorate TimePicker Widget
                     _TimePickerButton(
                       label: "Bedtime",
                       time: controller.sleepStart.value,

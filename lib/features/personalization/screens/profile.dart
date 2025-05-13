@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 
 import 'package:moodiary/common/widgets/appbar/appbar.dart';
 import 'package:moodiary/data/repositories/authentication/authentication_repository.dart';
+import 'package:moodiary/features/moodiary/screens/moodlog/widgets/customize_widgets/blocks/predefined_icon_picker.dart';
 
 import 'package:moodiary/utils/constants/colors.dart';
 import 'package:moodiary/utils/constants/image_strings.dart';
@@ -17,10 +18,10 @@ import '../../../utils/helpers/helper_functions.dart';
 import '../../../utils/helpers/network_manager.dart';
 import '../../../utils/popups/full_screen_loader.dart';
 import '../../moodiary/models/icon_metadata.dart';
-import '../../moodiary/screens/moodlog/customize_recording_block.dart';
+
 import '../controllers/user_controller.dart';
 import 'change_name.dart';
-import 'change_user_name.dart';
+import 'change_username.dart';
 import 'widgets/profile_menu.dart';
 
 class ProfileScreen extends StatelessWidget {
