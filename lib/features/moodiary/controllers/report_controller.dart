@@ -24,6 +24,12 @@ class ReportController extends GetxController {
     ever(selectedMonth, (DateTime m) => loadMonthlyMoodLogs(m));
     // initial load
     loadMonthlyMoodLogs(selectedMonth.value);
+    // Clear any previous data to prevent data leakage between users
+    moods.clear();
+    annualMoods.clear();
+    spots.clear();
+    avgBedtime.value = null;
+    avgWakeUp.value = null;
   }
 
   Future<void> loadMonthlyMoodLogs(DateTime month) async {
@@ -195,5 +201,144 @@ class ReportController extends GetxController {
       final avgEnd = totalEndMinutes ~/ sleepEndTimes.length;
       avgWakeUp.value = TimeOfDay(hour: avgEnd ~/ 60, minute: avgEnd % 60);
     }
+  }
+
+  ///!------------------------------------- Annual Report -------------------------------------!///
+  final RxList<MoodModel> annualMoods = <MoodModel>[].obs;
+  final RxList<FlSpot> annualSpots = <FlSpot>[].obs;
+  // Add a selected year observable
+  final selectedYear = DateTime.now().year.obs;
+
+  // Year label for UI (e.g. "2025")
+  String get currentYearLabel => "${selectedYear.value}";
+
+  // List of available years from current year back to 2000
+  List<int> get availableYears {
+    final now = DateTime.now();
+    const startYear = 2000;
+    return List.generate(now.year - startYear + 1, (i) => now.year - i);
+  }
+
+  // Load annual mood data
+  Future<void> loadAnnualMoodLogs(int year) async {
+    selectedYear.value = year;
+    final startDate = DateTime(year, 1, 1);
+    final endDate = DateTime(year, 12, 31);
+
+    final annualMoodList = await MoodRepository.instance
+        .getMoodsByDateRange(startDate, endDate)
+        .first;
+
+    annualMoods.assignAll(annualMoodList);
+
+    // Generate monthly average mood spots for line chart
+    final monthlyAverages = <FlSpot>[];
+    for (int month = 1; month <= 12; month++) {
+      final monthMoods =
+          annualMoodList.where((m) => m.date.month == month).toList();
+      if (monthMoods.isNotEmpty) {
+        final avgScore =
+            monthMoods.map((m) => m.moodScore).reduce((a, b) => a + b) /
+                monthMoods.length;
+        monthlyAverages.add(FlSpot(month.toDouble(), avgScore));
+      }
+    }
+
+    // Store in annualSpots instead of spots for annual view
+    annualSpots.clear();
+    annualSpots.assignAll(monthlyAverages);
+
+    // Calculate average sleep times for the year
+    calculateAverageSleepTimes(annualMoodList);
+  }
+
+  // Open year picker dialog
+  Future<void> openYearPicker(BuildContext context) async {
+    final selected = await showModalBottomSheet<int>(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        final years = availableYears;
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: TSizes.spaceBtwItems),
+            Text("Select Year", style: Theme.of(context).textTheme.titleMedium),
+            Flexible(
+              child: ListView.builder(
+                itemCount: years.length,
+                itemBuilder: (_, index) {
+                  final year = years[index];
+                  return ListTile(
+                    title: Text(
+                      "$year",
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
+                    ),
+                    onTap: () => Navigator.pop(context, year),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (selected != null) {
+      loadAnnualMoodLogs(selected);
+    }
+  }
+
+  // Load initial annual data
+  void loadInitialAnnualData() {
+    loadAnnualMoodLogs(DateTime.now().year);
+  }
+
+  List<MapEntry<IconMetadata, int>> get mostFrequentIconsFromAnnual {
+    final iconCounts = <String, int>{};
+    for (final m in annualMoods) {
+      final allIds = <String>[
+        ...?m.emotions,
+        ...?m.weather,
+        ...?m.people,
+        ...?m.hobbies,
+        ...?m.work,
+        ...?m.health,
+        ...?m.chores,
+        ...?m.relationship,
+        ...?m.other,
+      ];
+      m.customBlocks?.values.forEach(allIds.addAll);
+      for (var id in allIds) {
+        iconCounts[id] = (iconCounts[id] ?? 0) + 1;
+      }
+    }
+
+    final sorted = iconCounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    final top = sorted.take(10);
+    final rawMap = RecordingBlockController.instance.allIconMetadataById;
+
+    return top.map((e) {
+      final rec = rawMap[e.key];
+      final meta = rec != null
+          ? IconMetadata(
+              id: rec.id,
+              label: rec.label,
+              iconPath: rec.iconPath,
+              category: IconCategory.expression)
+          : IconMetadata(
+              id: e.key,
+              label: e.key,
+              iconPath: '',
+              category: IconCategory.expression);
+      return MapEntry(meta, e.value);
+    }).toList();
   }
 }

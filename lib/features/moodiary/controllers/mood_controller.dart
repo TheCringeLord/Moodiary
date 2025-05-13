@@ -12,6 +12,8 @@ import '../../../utils/popups/full_screen_loader.dart';
 import '../../../utils/popups/loaders.dart';
 import '../models/mood_model.dart';
 import '../models/recording_block_model.dart';
+import 'detail_controller.dart';
+import 'report_controller.dart';
 
 class MoodController extends GetxController {
   static MoodController get instance => Get.find();
@@ -33,8 +35,8 @@ class MoodController extends GetxController {
   GlobalKey<FormState> notesFormKey = GlobalKey<FormState>();
 
   ///* Variables for sleep start and end times
-  final Rx<TimeOfDay> sleepStart = TimeOfDay(hour: 23, minute: 0).obs;
-  final Rx<TimeOfDay> sleepEnd = TimeOfDay(hour: 7, minute: 0).obs;
+  final Rx<TimeOfDay> sleepStart = const TimeOfDay(hour: 23, minute: 0).obs;
+  final Rx<TimeOfDay> sleepEnd = const TimeOfDay(hour: 7, minute: 0).obs;
   final RxBool isSleepSaved = false.obs;
 
   ///*! -------------End-Variables-------------------!*///
@@ -69,8 +71,8 @@ class MoodController extends GetxController {
     selectedIconsPerBlock.clear();
 
     // 🧼 Reset sleep
-    sleepStart.value = TimeOfDay(hour: 22, minute: 0);
-    sleepEnd.value = TimeOfDay(hour: 6, minute: 0);
+    sleepStart.value = const TimeOfDay(hour: 22, minute: 0);
+    sleepEnd.value = const TimeOfDay(hour: 6, minute: 0);
     isSleepSaved.value = false;
 
     // 🧼 Reset notes
@@ -91,7 +93,7 @@ class MoodController extends GetxController {
     try {
       // Show full screen loader
       TFullScreenLoader.openLoadingDialog(
-          "Logging you in...", TImages.loadingJuggleAnimation);
+          "Saving your records...", TImages.loadingJuggleAnimation);
 
       // Check internet
       final isConnected = await NetworkManager.instance.isConnected();
@@ -214,5 +216,36 @@ class MoodController extends GetxController {
   void loadBlocks() async {
     await RecordingBlockController.instance.fetchBlocks();
     recordingBlocks.value = RecordingBlockController.instance.recordingBlocks;
+  }
+
+  Future<void> deleteMood(String moodId) async {
+    final detailCtrl = DetailController.instance;
+    final reportCtrl =
+        Get.isRegistered<ReportController>() ? ReportController.instance : null;
+
+    try {
+      // 1. Delete from Firestore
+      await MoodRepository.instance.deleteMood(moodId);
+
+      // 2. Update local state in DetailController
+      detailCtrl.detailedMoods.removeWhere((m) => m.id == moodId);
+      detailCtrl.iconsByDate.removeWhere(
+          (date, _) => detailCtrl.detailedMoods.every((m) => m.date != date));
+      detailCtrl.detailedMoods.refresh();
+      detailCtrl.iconsByDate.refresh();
+
+      // 3. ALSO refresh the ReportController if it's in memory
+      if (reportCtrl != null) {
+        await reportCtrl.loadMonthlyMoodLogs(reportCtrl.selectedMonth.value);
+      }
+
+      // 4. Notify user
+      TLoaders.successSnackBar(
+        title: "Mood log deleted",
+        message: "Your mood has been deleted successfully.",
+      );
+    } catch (e) {
+      TLoaders.errorSnackBar(title: "Error", message: e.toString());
+    }
   }
 }

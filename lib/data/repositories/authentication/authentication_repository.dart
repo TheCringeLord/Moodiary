@@ -13,6 +13,11 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../features/authentication/screens/signup/verify_email.dart';
+import '../../../features/moodiary/controllers/calendar_controller.dart';
+import '../../../features/moodiary/controllers/detail_controller.dart';
+import '../../../features/moodiary/controllers/mood_controller.dart';
+import '../../../features/moodiary/controllers/recording_block_controller.dart';
+import '../../../features/moodiary/controllers/report_controller.dart';
 import '../../../navigation_menu.dart';
 import '../mood/recording_block_repository.dart';
 
@@ -199,6 +204,21 @@ class AuthenticationRepository extends GetxController {
     try {
       await FirebaseAuth.instance.signOut();
 
+      if (Get.isRegistered<ReportController>()) {
+        final reportCtrl = Get.find<ReportController>();
+        reportCtrl.moods.clear();
+        reportCtrl.annualMoods.clear(); // Clear annual data to prevent leakage
+        reportCtrl.spots.clear();
+        reportCtrl.avgBedtime.value = null;
+        reportCtrl.avgWakeUp.value = null;
+      }
+      // Clear user-specific controllers
+      Get.delete<CalendarController>();
+      Get.delete<MoodController>();
+      Get.delete<DetailController>();
+      Get.delete<ReportController>();
+      Get.delete<RecordingBlockController>();
+      // Navigate to login screen
       Get.offAll(() => const LoginScreen());
     } on FirebaseAuthException catch (e) {
       throw TFirebaseAuthException(e.code).message;

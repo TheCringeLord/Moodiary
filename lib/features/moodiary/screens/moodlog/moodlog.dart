@@ -14,14 +14,19 @@ import '../../../../utils/loaders/shimmer_effect.dart';
 import '../../../../utils/validators/validation.dart';
 import '../../controllers/mood_controller.dart';
 import '../../controllers/recording_block_controller.dart';
+import '../../models/mood_model.dart';
 import '../../models/recording_block_model.dart';
 import '../../models/recording_icon_mode.dart';
 import 'customize_recording_block.dart';
 
 class MoodlogScreen extends StatelessWidget {
-  const MoodlogScreen({super.key, required this.selectedDate});
+  const MoodlogScreen({
+    super.key,
+    required this.selectedDate,
+    this.existingMood,
+  });
   final DateTime selectedDate;
-
+  final MoodModel? existingMood;
   @override
   Widget build(BuildContext context) {
     final moodController = Get.put(MoodController());
@@ -29,6 +34,67 @@ class MoodlogScreen extends StatelessWidget {
 
     if (moodController.recordingBlocks.isEmpty) {
       moodController.loadBlocks();
+    }
+
+    // if we're editing, prefill the controller once
+    if (existingMood != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        moodController.clear();
+        moodController.selectedMainMood.value = existingMood!.mainMood;
+        moodController.notes.text = existingMood!.note ?? '';
+        if (existingMood!.sleepStart != null &&
+            existingMood!.sleepEnd != null) {
+          moodController.isSleepSaved.value = true;
+          final ss = existingMood!.sleepStart!;
+          final se = existingMood!.sleepEnd!;
+          moodController.sleepStart.value =
+              TimeOfDay(hour: ss.hour, minute: ss.minute);
+          moodController.sleepEnd.value =
+              TimeOfDay(hour: se.hour, minute: se.minute);
+        }
+        // fill the built-in blocks
+        if (existingMood!.emotions != null) {
+          moodController.selectedIconsPerBlock['emotions'] =
+              RxList(existingMood!.emotions!);
+        }
+        if (existingMood!.weather != null) {
+          moodController.selectedIconsPerBlock['weather'] =
+              RxList(existingMood!.weather!);
+        }
+        if (existingMood!.people != null) {
+          moodController.selectedIconsPerBlock['people'] =
+              RxList(existingMood!.people!);
+        }
+        if (existingMood!.hobbies != null) {
+          moodController.selectedIconsPerBlock['hobbies'] =
+              RxList(existingMood!.hobbies!);
+        }
+        if (existingMood!.work != null) {
+          moodController.selectedIconsPerBlock['work'] =
+              RxList(existingMood!.work!);
+        }
+        if (existingMood!.health != null) {
+          moodController.selectedIconsPerBlock['health'] =
+              RxList(existingMood!.health!);
+        }
+        if (existingMood!.chores != null) {
+          moodController.selectedIconsPerBlock['chores'] =
+              RxList(existingMood!.chores!);
+        }
+        if (existingMood!.relationship != null) {
+          moodController.selectedIconsPerBlock['relationship'] =
+              RxList(existingMood!.relationship!);
+        }
+        if (existingMood!.other != null) {
+          moodController.selectedIconsPerBlock['other'] =
+              RxList(existingMood!.other!);
+        }
+
+        // fill any custom blocks
+        existingMood!.customBlocks?.forEach((blockId, items) {
+          moodController.selectedIconsPerBlock[blockId] = RxList(items);
+        });
+      });
     }
     return Scaffold(
       appBar: TAppBar(
@@ -56,7 +122,7 @@ class MoodlogScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ///* Main Mood Selection
-              TMoodSelector(),
+              const TMoodSelector(),
 
               const SizedBox(height: TSizes.spaceBtwSections),
 
@@ -75,10 +141,10 @@ class MoodlogScreen extends StatelessWidget {
                     if (isLoading)
                       ...List.generate(
                           numberOfBlocks,
-                          (_) => Padding(
-                                padding: const EdgeInsets.symmetric(
+                          (_) => const Padding(
+                                padding: EdgeInsets.symmetric(
                                     vertical: TSizes.spaceBtwSections / 2),
-                                child: const TShimmerEffect(
+                                child: TShimmerEffect(
                                     width: double.infinity, height: 100),
                               ))
                     else
@@ -242,49 +308,55 @@ class TSleepBlock extends StatelessWidget {
 class TRecordingBlock extends StatelessWidget {
   final RecordingBlockModel block;
 
-  const TRecordingBlock({
-    super.key,
-    required this.block,
-  });
+  TRecordingBlock({super.key, required this.block});
+
+  // Create a reactive state for expansion per block instance
+  final RxBool isExpanded = true.obs;
 
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    return TRoundedContainer(
-      backgroundColor: dark ? TColors.textPrimary : TColors.white,
-      padding: const EdgeInsets.all(TSizes.defaultSpace),
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ///* Block title
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                block.displayName,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              IconButton(
-                onPressed: () {}, // optional collapse/expand or settings
-                icon: const Icon(
-                  Iconsax.arrow_down_1,
-                  size: TSizes.iconSm,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: TSizes.spaceBtwItems),
 
-          ///* Icons
-          Wrap(
-            spacing: TSizes.spaceBtwItems,
-            runSpacing: TSizes.spaceBtwItems,
-            children: block.icons.map((icon) {
-              return TRecordingIcon(icon: icon, blockId: block.id);
-            }).toList(),
-          ),
-        ],
+    return Obx(
+      () => TRoundedContainer(
+        backgroundColor: dark ? TColors.textPrimary : TColors.white,
+        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ///* Block title with toggle icon
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  block.displayName,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                IconButton(
+                  onPressed: () => isExpanded.toggle(),
+                  icon: Icon(
+                    isExpanded.value
+                        ? Iconsax.arrow_up_2
+                        : Iconsax.arrow_down_1,
+                    size: TSizes.iconSm,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: TSizes.spaceBtwItems),
+
+            ///* Icons
+            if (isExpanded.value)
+              Wrap(
+                spacing: TSizes.spaceBtwItems,
+                runSpacing: TSizes.spaceBtwItems,
+                children: block.icons.map((icon) {
+                  return TRecordingIcon(icon: icon, blockId: block.id);
+                }).toList(),
+              ),
+          ],
+        ),
       ),
     );
   }

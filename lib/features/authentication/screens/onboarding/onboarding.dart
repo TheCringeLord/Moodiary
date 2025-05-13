@@ -46,13 +46,13 @@ class OnboardingScreen extends StatelessWidget {
           ),
 
           ///* Skip Button
-          OnBoardingSkip(),
+          const OnBoardingSkip(),
 
           ///* Dot Navigation
-          OnBoardingDotNavigator(),
+          const OnBoardingDotNavigator(),
 
           ///* Next Button
-          OnBoardingNextButton(),
+          const OnBoardingNextButton(),
         ],
       ),
     );

@@ -1,15 +1,26 @@
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:moodiary/common/widgets/appbar/appbar.dart';
 
-import 'package:moodiary/data/repositories/authentication/authentication_repository.dart';
+
+import 'package:moodiary/features/moodiary/screens/moodlog/customize_recording_block.dart';
 import 'package:moodiary/utils/constants/colors.dart';
 
 import 'package:moodiary/utils/constants/sizes.dart';
 import '../../../../common/widgets/custom_shape/container/rounded_container.dart';
+import '../../../../common/widgets/images/circular_image.dart';
+import '../../../../utils/constants/enums.dart';
+import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/helpers/helper_functions.dart';
+import '../../../personalization/controllers/user_controller.dart';
 import '../../controllers/calendar_controller.dart';
 import '../../controllers/mood_controller.dart';
+import '../../controllers/recording_block_controller.dart';
+import '../../models/icon_metadata.dart';
+import '../history/history.dart';
 
 class CalendarScreen extends StatelessWidget {
   const CalendarScreen({super.key});
@@ -17,41 +28,139 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(MoodController());
-    Get.put(CalendarController());
+    Get.put(RecordingBlockController());
+    final calCtrl = Get.put(CalendarController());
     final dark = THelperFunctions.isDarkMode(context);
-    final auth = AuthenticationRepository.instance;
+    Get.put(UserController());
+
+    final userController = Get.put(UserController());
 
     return Scaffold(
       backgroundColor: dark ? TColors.dark : TColors.light,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(TSizes.defaultSpace),
-            child: Column(
-              children: [
-                ///* Header
-                TCalendarHeader(),
-
-                const SizedBox(height: TSizes.defaultSpace),
-
-                ///* Week Labels
-                TCalendarWeekLabel(),
-
-                const SizedBox(height: TSizes.md),
-
-                ///* Calendar Grid
-                TCalendarGridView(),
-
-                ///* Mood Cards To Show info
-              ],
+      appBar: TAppBar(
+        title: Row(
+          children: [
+            Obx(
+              () => TCircularImage(
+                image: userController.user.value.profilePicture.isEmpty
+                    ? TImages.neutralExpression
+                    : userController.user.value.profilePicture,
+                backgroundColor: THelperFunctions.isDarkMode(context)
+                    ? TColors.textPrimary
+                    : TColors.white,
+                width: 55,
+                height: 55,
+              ),
             ),
+            const SizedBox(width: TSizes.spaceBtwItems),
+            Obx(
+              () => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: TSizes.xs),
+                  Text(
+                    userController.user.value.username,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: TSizes.xs),
+                  Text(
+                    "${userController.user.value.firstName} ${userController.user.value.lastName}",
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        showBackArrow: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Iconsax.setting_2),
+            onPressed: () {
+              Get.to(() => const CustomizeRecordingBlockScreen());
+            },
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(TSizes.defaultSpace),
+          child: Column(
+            children: [
+              ///* Header
+              const TCalendarHeader(),
+
+              const SizedBox(height: TSizes.defaultSpace),
+
+              ///* Week Labels
+              const TCalendarWeekLabel(),
+
+              const SizedBox(height: TSizes.md),
+
+              ///* Calendar Grid
+              const SizedBox(
+                height: 500,
+                child: TCalendarGridView(),
+              ),
+
+              ///* Mood Cards To Show info
+
+              Obx(() {
+                Get.put(RecordingBlockController());
+                if (!calCtrl.showMoodCard.value ||
+                    calCtrl.selectedDate.value == null) {
+                  return const SizedBox.shrink();
+                }
+                final date = calCtrl.selectedDate.value!;
+                // find the mood for that day
+                final mood = calCtrl.monthlyMoods.firstWhereOrNull((m) =>
+                    m.date.year == date.year &&
+                    m.date.month == date.month &&
+                    m.date.day == date.day);
+                if (mood == null) {
+                  return const SizedBox.shrink();
+                }
+                // resolve icons for this mood
+                final rawMap =
+                    RecordingBlockController.instance.allIconMetadataById;
+                final allIds = <String>[
+                  ...?mood.emotions,
+                  ...?mood.weather,
+                  ...?mood.people,
+                  ...?mood.hobbies,
+                  ...?mood.work,
+                  ...?mood.health,
+                  ...?mood.chores,
+                  ...?mood.relationship,
+                  ...?mood.other,
+                ];
+                mood.customBlocks?.values.forEach(allIds.addAll);
+                final icons = allIds
+                    .map((id) {
+                      final rec = rawMap[id];
+                      return rec != null
+                          ? IconMetadata(
+                              id: rec.id,
+                              label: rec.label,
+                              iconPath: rec.iconPath,
+                              category: IconCategory.expression,
+                            )
+                          : IconMetadata(
+                              id: id,
+                              label: id,
+                              iconPath: '',
+                              category: IconCategory.expression,
+                            );
+                    })
+                    .where((ic) => ic.iconPath.isNotEmpty)
+                    .toList();
+
+                // reuse your detail card widget
+                return TDetailCard(mood: mood, icons: icons);
+              }),
+            ],
           ),
         ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(TSizes.defaultSpace),
-        child: ElevatedButton(
-            onPressed: () => auth.logout(), child: Text("Log out")),
       ),
     );
   }
@@ -160,11 +269,15 @@ class TDateTile extends StatelessWidget {
               child: Text(
                 dayNumber.toString(),
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: isSelected
-                          ? TColors.white
-                          : dark
-                              ? TColors.grey
-                              : TColors.textSecondary,
+                      color: calendarController.isToday(dayNumber)
+                          ? isSelected
+                              ? TColors.white
+                              : TColors.primary
+                          : isSelected
+                              ? TColors.white
+                              : dark
+                                  ? TColors.grey
+                                  : TColors.textSecondary,
                     ),
               ),
             ),
@@ -226,8 +339,7 @@ class TCalendarHeader extends StatelessWidget {
 
           ///* Month and year selector
           InkWell(
-            //TODO: Show month and year selector here
-            onTap: () {},
+            onTap: () => _showMonthPickerDialog(context, controller),
             borderRadius: BorderRadius.circular(TSizes.borderRadiusMd),
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -261,4 +373,115 @@ class TCalendarHeader extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _showMonthPickerDialog(
+    BuildContext context, CalendarController controller) async {
+  final current = controller.currentMonth.value;
+  final dark = THelperFunctions.isDarkMode(context);
+
+  final months = List.generate(12, (i) => i + 1);
+  final years = List.generate(101, (i) => 2000 + i);
+
+  int selectedMonth = current.month;
+  int selectedYear = current.year;
+
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(TSizes.borderRadiusLg),
+        ),
+        backgroundColor: dark ? TColors.dark : TColors.white,
+        child: SizedBox(
+          height: 400,
+          width: 400,
+          child: Padding(
+            padding: const EdgeInsets.all(TSizes.defaultSpace),
+            child: Column(
+              children: [
+                Text("Choose Month",
+                    style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: TSizes.spaceBtwSections),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Month Picker
+                      Expanded(
+                        child: CupertinoPicker(
+                          squeeze: 1.1,
+                          scrollController: FixedExtentScrollController(
+                              initialItem: selectedMonth - 1),
+                          itemExtent: 36,
+                          onSelectedItemChanged: (index) {
+                            selectedMonth = months[index];
+                          },
+                          children: months
+                              .map((m) => Center(
+                                    child: Text(
+                                      THelperFunctions.getMonthName(m),
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                      // Year Picker
+                      Expanded(
+                        child: CupertinoPicker(
+                          squeeze: 1.1,
+                          scrollController: FixedExtentScrollController(
+                              initialItem: years.indexOf(current.year)),
+                          itemExtent: 36,
+                          onSelectedItemChanged: (index) {
+                            selectedYear = years[index];
+                          },
+                          children: years
+                              .map((y) => Center(
+                                    child: Text(
+                                      '$y',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: TColors.lightGrey,
+                          foregroundColor: TColors.darkerGrey,
+                          side: const BorderSide(color: TColors.grey),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Cancel"),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          controller.currentMonth.value =
+                              DateTime(selectedYear, selectedMonth);
+                          Navigator.pop(context);
+                        },
+                        child: const Text("OK"),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }

@@ -43,6 +43,9 @@ class UpdateNameController extends GetxController {
       final isConnected = await NetworkManager.instance.isConnected();
       if (!isConnected) {
         TFullScreenLoader.stopLoading();
+        TLoaders.errorSnackBar(
+            title: "No Internet Connection",
+            message: "Please check your internet connection");
         return;
       }
 
@@ -54,8 +57,8 @@ class UpdateNameController extends GetxController {
 
       // 4. Write to Firebase
       Map<String, dynamic> name = {
-        'FirstName': firstName.text.trim(),
-        'LastName': lastName.text.trim(),
+        'firstName': firstName.text.trim(),
+        'lastName': lastName.text.trim(),
       };
       await userRepository.updateSingleField(name);
 
@@ -70,19 +73,17 @@ class UpdateNameController extends GetxController {
       // 6. Close loader
       TFullScreenLoader.stopLoading();
 
-      // 7. Pop ChangeName and return `true`
-      Get.back(result: true);
-
-      // 8. Show success snackbar
+      // 7. Show success snackbar
       TLoaders.successSnackBar(
         title: "Congratulations",
         message: "Your name has been updated successfully",
       );
+
+      // 8. Pop ChangeName and return `true` (ONLY ONE Get.back())
+      Get.back(result: true);
     } catch (e) {
       // 9. Make sure loader is closed on error
-      if (Get.isDialogOpen == true) {
-        TFullScreenLoader.stopLoading();
-      }
+      TFullScreenLoader.stopLoading();
       TLoaders.errorSnackBar(
         title: "Oh no!",
         message: e.toString(),

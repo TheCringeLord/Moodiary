@@ -14,7 +14,7 @@ class App extends StatelessWidget {
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
       initialBinding: GeneralBindings(),
-      home: Center(
+      home: const Center(
         child: CircularProgressIndicator(
           color: Colors.white,
         ),

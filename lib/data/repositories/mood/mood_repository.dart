@@ -218,4 +218,41 @@ class MoodRepository extends GetxController {
 
     await batch.commit();
   }
+
+  Stream<List<MoodModel>> getMoodsByDateRange(
+      DateTime startDate, DateTime endDate) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // no user → just emit empty list
+      return Stream.value(<MoodModel>[]);
+    }
+
+    try {
+      // Start of the start date
+      final start = Timestamp.fromDate(
+          DateTime(startDate.year, startDate.month, startDate.day));
+      // End of the end date
+      final end = Timestamp.fromDate(
+          DateTime(endDate.year, endDate.month, endDate.day, 23, 59, 59));
+
+      return _db
+          .collection('users')
+          .doc(user.uid)
+          .collection('moods')
+          .where('date', isGreaterThanOrEqualTo: start)
+          .where('date', isLessThanOrEqualTo: end)
+          .orderBy('date')
+          .snapshots()
+          .map((snap) =>
+              snap.docs.map((d) => MoodModel.fromDocumentSnapshot(d)).toList());
+    } on FirebaseException catch (e) {
+      throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw "Something went wrong. Please try again later.";
+    }
+  }
 }

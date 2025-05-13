@@ -39,11 +39,37 @@ class TImages {
       "assets/icons/packs/weather/icons8-storm-100.png";
   static const String rainbow =
       "assets/icons/packs/weather/icons8-rainbow-100.png";
+
+  static const String snowy =
+      "assets/icons/packs/weather/icons8-snow-storm-100.png";
+  static const String rainyNight =
+      "assets/icons/packs/weather/icons8-rainy-night-100.png";
+  static const String hail = "assets/icons/packs/weather/icons8-hail-100.png";
+  static const String foggy = "assets/icons/packs/weather/icons8-fog-100.png";
+  static const String windy =
+      "assets/icons/packs/weather/icons8-windy-weather-100.png";
+
   // -- Emotion Icons
   static const String excited =
       "assets/icons/packs/emotion/icons8-confetti-100.png";
   static const String relaxed =
       "assets/icons/packs/emotion/icons8-the-toast-100.png";
+
+  static const String happyFlower =
+      "assets/icons/packs/emotion/icons8-flower-100.png";
+  static const String sleepy =
+      "assets/icons/packs/emotion/icons8-sleep-100.png";
+  static const String hopeful =
+      "assets/icons/packs/emotion/icons8-party-balloons-100.png";
+  static const String proud =
+      "assets/icons/packs/emotion/icons8-trophy-100.png";
+  static const String happyFlower2 =
+      "assets/icons/packs/emotion/icons8-spa-flower-100.png";
+  static const String enthusiastic =
+      "assets/icons/packs/emotion/icons8-rocket-100.png";
+  static const String refreshed =
+      "assets/icons/packs/emotion/icons8-wind-100.png";
+
   // -- Expression Icons
   static const String bored =
       "assets/icons/packs/expression/icons8-bored-100.png";

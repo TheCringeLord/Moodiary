@@ -46,6 +46,8 @@ class CalendarController extends GetxController {
 
   ///* Move to previous month
   void goToPreviousMonth() {
+    showMoodCard.value = false;
+    selectedDate.value = null;
     currentMonth.value = DateTime(
       currentMonth.value.year,
       currentMonth.value.month - 1,
@@ -54,6 +56,8 @@ class CalendarController extends GetxController {
 
   ///* Move to next month
   void goToNextMonth() {
+    showMoodCard.value = false;
+    selectedDate.value = null;
     currentMonth.value = DateTime(
       currentMonth.value.year,
       currentMonth.value.month + 1,
@@ -161,6 +165,13 @@ class CalendarController extends GetxController {
         title: "Oops!",
         message: "You cannot select future dates.",
       );
+      return;
+    }
+
+    // toggle off if tapping the same selected day
+    if (showMoodCard.value && selectedDate.value == date) {
+      showMoodCard.value = false;
+      selectedDate.value = null;
       return;
     }
 

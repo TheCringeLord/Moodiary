@@ -33,4 +33,34 @@ const weatherIcons = <IconMetadata>[
     iconPath: TImages.rainbow,
     category: IconCategory.weather,
   ),
+  IconMetadata(
+    id: 'snowy',
+    label: 'Snowy',
+    iconPath: TImages.snowy,
+    category: IconCategory.weather,
+  ),
+  IconMetadata(
+    id: 'rainyNight',
+    label: 'Rainy Night',
+    iconPath: TImages.rainyNight,
+    category: IconCategory.weather,
+  ),
+  IconMetadata(
+    id: 'hail',
+    label: 'Hail',
+    iconPath: TImages.hail,
+    category: IconCategory.weather,
+  ),
+  IconMetadata(
+    id: 'foggy',
+    label: 'Foggy',
+    iconPath: TImages.foggy,
+    category: IconCategory.weather,
+  ),
+  IconMetadata(
+    id: 'windy',
+    label: 'Windy',
+    iconPath: TImages.windy,
+    category: IconCategory.weather,
+  ),
 ];

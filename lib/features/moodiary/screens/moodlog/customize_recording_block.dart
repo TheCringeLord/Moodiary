@@ -51,14 +51,14 @@ class CustomizeRecordingBlockScreen extends StatelessWidget {
           ),
           showBackArrow: true,
           centerTitle: true,
-          bottom: TTabBar(
+          bottom: const TTabBar(
             tabs: [
               Tab(text: "Active blocks"),
               Tab(text: "Hidden blocks"),
             ],
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             ///* Active blocks tab
             TActiveBlockTab(),
@@ -90,10 +90,10 @@ class THiddenBlockTab extends StatelessWidget {
               if (isLoading)
                 ...List.generate(
                   3,
-                  (_) => Padding(
-                    padding: const EdgeInsets.symmetric(
+                  (_) => const Padding(
+                    padding: EdgeInsets.symmetric(
                         vertical: TSizes.spaceBtwSections / 2),
-                    child: const TShimmerEffect(
+                    child: TShimmerEffect(
                         width: double.infinity, height: 100),
                   ),
                 )
@@ -178,10 +178,10 @@ class TActiveBlockTab extends StatelessWidget {
                   if (isLoading)
                     ...List.generate(
                       3,
-                      (_) => Padding(
-                        padding: const EdgeInsets.symmetric(
+                      (_) => const Padding(
+                        padding: EdgeInsets.symmetric(
                             vertical: TSizes.spaceBtwSections / 2),
-                        child: const TShimmerEffect(
+                        child: TShimmerEffect(
                             width: double.infinity, height: 100),
                       ),
                     )
@@ -272,11 +272,7 @@ class TNotesBlockCustomize extends StatelessWidget {
                         ),
                       );
                     },
-                    icon: Icon(Iconsax.more, size: TSizes.iconSm),
-                  ),
-                  IconButton(
-                    onPressed: () {}, // Expand/collapse
-                    icon: Icon(Iconsax.arrow_down_1, size: TSizes.iconSm),
+                    icon: const Icon(Iconsax.more, size: TSizes.iconSm),
                   ),
                 ],
               ),
@@ -362,11 +358,7 @@ class TSleepBlockCustomize extends StatelessWidget {
                         ),
                       );
                     },
-                    icon: Icon(Iconsax.more, size: TSizes.iconSm),
-                  ),
-                  IconButton(
-                    onPressed: () {}, // Expand/collapse
-                    icon: Icon(Iconsax.arrow_down_1, size: TSizes.iconSm),
+                    icon: const Icon(Iconsax.more, size: TSizes.iconSm),
                   ),
                 ],
               ),
@@ -412,140 +404,142 @@ class TSleepBlockCustomize extends StatelessWidget {
 class TCustomizeRecordingBlock extends StatelessWidget {
   final RecordingBlockModel block;
 
-  const TCustomizeRecordingBlock({
-    super.key,
-    required this.block,
-  });
+  TCustomizeRecordingBlock({super.key, required this.block});
+
+  final RxBool isExpanded = true.obs;
 
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     final updateCtrl = UpdateBlockNameController.instance;
-    return TRoundedContainer(
-      backgroundColor: dark ? TColors.textPrimary : TColors.white,
-      padding: const EdgeInsets.all(TSizes.defaultSpace),
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Block title
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    block.displayName,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      updateCtrl.initializeName(block);
-                      showModalBottomSheet(
-                        backgroundColor: dark ? TColors.dark : TColors.white,
-                        context: context,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                        ),
-                        builder: (_) => TBottomDialog(
-                          title: "Rename Block",
-                          controller: updateCtrl.blockName,
-                          formKey: updateCtrl.formKey,
-                          onConfirm: () {
-                            updateCtrl.updateBlockName();
-                          },
-                        ),
-                      );
-                    },
-                    icon: const Icon(Iconsax.edit, size: TSizes.iconSm),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  ///* Show menu
-                  IconButton(
-                    onPressed: () {
-                      final isSpecial = block.isSpecial;
-                      final isHidden = block.isHidden;
 
-                      showModalBottomSheet(
-                        context: context,
-                        backgroundColor: dark ? TColors.dark : TColors.white,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                        ),
-                        builder: (_) => Padding(
-                          padding: const EdgeInsets.all(TSizes.defaultSpace),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ListTile(
-                                leading: Icon(
-                                  isHidden ? Iconsax.eye : Iconsax.eye_slash,
-                                ),
-                                title: Text(
-                                    isHidden ? "Unhide Block" : "Hide Block"),
-                                onTap: () {
-                                  Get.back();
-                                  HideBlockController.instance
-                                      .toggleVisibility(block.id, !isHidden);
-                                },
-                              ),
-                              if (!isSpecial)
+    return Obx(
+      () => TRoundedContainer(
+        backgroundColor: dark ? TColors.textPrimary : TColors.white,
+        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Block title row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      block.displayName,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        updateCtrl.initializeName(block);
+                        showModalBottomSheet(
+                          backgroundColor: dark ? TColors.dark : TColors.white,
+                          context: context,
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
+                          ),
+                          builder: (_) => TBottomDialog(
+                            title: "Rename Block",
+                            controller: updateCtrl.blockName,
+                            formKey: updateCtrl.formKey,
+                            onConfirm: () {
+                              updateCtrl.updateBlockName();
+                            },
+                          ),
+                        );
+                      },
+                      icon: const Icon(Iconsax.edit, size: TSizes.iconSm),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        final isSpecial = block.isSpecial;
+                        final isHidden = block.isHidden;
+
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: dark ? TColors.dark : TColors.white,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
+                          ),
+                          builder: (_) => Padding(
+                            padding: const EdgeInsets.all(TSizes.defaultSpace),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
                                 ListTile(
-                                  leading: const Icon(
-                                    Iconsax.trash,
-                                    color: TColors.error,
-                                  ),
-                                  title: const Text(
-                                    "Delete Block",
-                                    style: TextStyle(
-                                      color: TColors.error,
-                                    ),
-                                  ),
+                                  leading: Icon(isHidden
+                                      ? Iconsax.eye
+                                      : Iconsax.eye_slash),
+                                  title: Text(
+                                      isHidden ? "Unhide Block" : "Hide Block"),
                                   onTap: () {
-                                    Get.back(); // Close context menu or bottom sheet
-
-                                    Get.dialog(
-                                      TDialog(block: block),
-                                    );
+                                    Get.back();
+                                    HideBlockController.instance
+                                        .toggleVisibility(block.id, !isHidden);
                                   },
                                 ),
-                            ],
+                                if (!isSpecial)
+                                  ListTile(
+                                    leading: const Icon(
+                                      Iconsax.trash,
+                                      color: TColors.error,
+                                    ),
+                                    title: const Text(
+                                      "Delete Block",
+                                      style: TextStyle(color: TColors.error),
+                                    ),
+                                    onTap: () {
+                                      Get.back();
+                                      Get.dialog(TDialog(block: block));
+                                    },
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    icon: Icon(Iconsax.more, size: TSizes.iconSm),
-                  ),
+                        );
+                      },
+                      icon: const Icon(Iconsax.more, size: TSizes.iconSm),
+                    ),
 
-                  ///* Expand/collapse
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Iconsax.arrow_down_1, size: TSizes.iconSm),
-                  ),
+                    /// Expand/collapse toggle
+                    IconButton(
+                      onPressed: () => isExpanded.toggle(),
+                      icon: Icon(
+                        isExpanded.value
+                            ? Iconsax.arrow_up_2
+                            : Iconsax.arrow_down_1,
+                        size: TSizes.iconSm,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+
+            const SizedBox(height: TSizes.spaceBtwItems),
+
+            /// Block icons
+            if (isExpanded.value)
+              Wrap(
+                spacing: TSizes.spaceBtwItems,
+                runSpacing: TSizes.spaceBtwItems,
+                children: [
+                  for (final icon in block.icons)
+                    TCustomizeRecordingIcon(icon: icon, blockId: block.id),
+                  TAddIconButton(blockId: block.id),
                 ],
               ),
-            ],
-          ),
-
-          const SizedBox(height: TSizes.spaceBtwItems),
-
-          ///* Block icons
-          Wrap(
-            spacing: TSizes.spaceBtwItems,
-            runSpacing: TSizes.spaceBtwItems,
-            children: [
-              for (final icon in block.icons)
-                TCustomizeRecordingIcon(icon: icon, blockId: block.id),
-              TAddIconButton(blockId: block.id), // Add Icon button at the end
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -599,7 +593,7 @@ class TDialog extends StatelessWidget {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TColors.error,
-                      side: BorderSide(
+                      side: const BorderSide(
                         color: TColors.error,
                       ),
                     ),
@@ -767,7 +761,7 @@ class _TEditIconDialog extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Positioned(
+                  const Positioned(
                     bottom: 0,
                     right: 0,
                     child: CircleAvatar(
@@ -840,7 +834,7 @@ class _TEditIconDialog extends StatelessWidget {
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: TColors.error,
-                                        side: BorderSide(
+                                        side: const BorderSide(
                                           color: TColors.error,
                                         ),
                                       ),
@@ -964,7 +958,7 @@ class TAddIconButton extends StatelessWidget {
             height: 48,
             radius: 24,
             backgroundColor: TColors.primary.withOpacity(0.1),
-            child: Icon(Iconsax.add, color: TColors.primary),
+            child: const Icon(Iconsax.add, color: TColors.primary),
           ),
           const SizedBox(height: TSizes.xs),
           Text(
@@ -1028,7 +1022,7 @@ class TPredefinedIconPicker extends StatelessWidget {
                             Get.back(result: iconMeta);
                           },
                           child: TRoundedContainer(
-                            padding: EdgeInsets.all(TSizes.xs),
+                            padding: const EdgeInsets.all(TSizes.xs),
                             width: 60,
                             height: 60,
                             radius: 30,

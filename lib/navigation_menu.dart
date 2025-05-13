@@ -1,10 +1,12 @@
 import 'package:moodiary/features/moodiary/screens/calendar/calendar.dart';
+import 'package:moodiary/features/personalization/screens/profile.dart';
 import 'package:moodiary/utils/constants/colors.dart';
 import 'package:moodiary/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
+import 'features/moodiary/screens/history/history.dart';
 import 'features/moodiary/screens/reports/report.dart';
 
 class NavigationMenu extends StatelessWidget {
@@ -55,12 +57,8 @@ class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
   final screens = [
     const CalendarScreen(),
-    const Scaffold(
-      backgroundColor: Color.fromARGB(255, 48, 117, 134),
-    ),
+    const HistoryScreen(),
     const ReportScreen(),
-    const Scaffold(
-      backgroundColor: Color.fromARGB(255, 48, 75, 134),
-    ),
+    const ProfileScreen(),
   ];
 }

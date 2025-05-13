@@ -22,23 +22,23 @@ class LoginScreen extends StatelessWidget {
     final dark = THelperFunctions.isDarkMode(context);
     return Scaffold(
       backgroundColor: dark ? TColors.dark : TColors.white,
-      body: SingleChildScrollView(
+      body: const SingleChildScrollView(
         child: Padding(
           padding: TSpacingStyle.paddingWithAppBarHeight,
           child: Column(
             children: [
               ///* Logo, Title & Sub-Title
-              const TLoginHeader(),
+              TLoginHeader(),
 
               ///* Form
-              const TLoginForm(),
+              TLoginForm(),
 
               ///* Divider
               TFormDivider(dividerText: "OR"),
-              const SizedBox(height: TSizes.spaceBtwSections),
+              SizedBox(height: TSizes.spaceBtwSections),
 
               ///* Footer
-              const TSocialButtons(),
+              TSocialButtons(),
             ],
           ),
         ),
