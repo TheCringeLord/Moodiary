@@ -9,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
-
-
 class ChangeUserName extends StatelessWidget {
   const ChangeUserName({super.key});
 
