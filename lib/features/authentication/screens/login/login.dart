@@ -13,9 +13,7 @@ import '../../../../utils/helpers/helper_functions.dart';
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
-  ///TODO Sign Up Screen
 
-  ///TODO Forgot Password Screen
 
   @override
   Widget build(BuildContext context) {

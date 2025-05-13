@@ -186,24 +186,6 @@ class CalendarController extends GetxController {
         m.date.day == date.day);
 
     if (existing != null) {
-      //* We have a logged mood → print all its info and stop
-      print("=== Mood details for $date ===");
-      print("Main Mood     : ${existing.mainMood}");
-      print("Sleep         : ${existing.sleepStart} - ${existing.sleepEnd}");
-      print("Sleep Duration: ${existing.sleepDurationInHours} Hours");
-      print("Notes         : ${existing.note}");
-      print("Emotions      : ${existing.emotions}");
-      print("People        : ${existing.people}");
-      print("Weather       : ${existing.weather}");
-      print("Hobbies       : ${existing.hobbies}");
-      print("Work          : ${existing.work}");
-      print("Health        : ${existing.health}");
-      print("Chores        : ${existing.chores}");
-      print("Relationship  : ${existing.relationship}");
-      print("Other         : ${existing.other}");
-      print("Custom Blocks : ${existing.customBlocks}");
-      print("Photos        : ${existing.photos}");
-      print("===============================");
       return;
     }
 

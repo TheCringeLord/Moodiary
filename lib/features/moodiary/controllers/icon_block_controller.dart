@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:moodiary/data/repositories/mood/recording_block_repository.dart';
 import 'package:moodiary/features/moodiary/controllers/recording_block_controller.dart';
 import 'package:moodiary/features/moodiary/models/recording_icon_mode.dart';
+import 'package:moodiary/utils/popups/loaders.dart';
 
 import '../../../data/repositories/mood/mood_repository.dart';
 import '../models/icon_metadata.dart';
@@ -91,10 +92,14 @@ class IconBlockController extends GetxController {
 
       // Save to Firebase
       await RecordingBlockRepository.instance.updateBlock(updatedBlock);
-
-      print("Icon label updated successfully to: $newLabel");
     } catch (e) {
-      print("Error updating icon label: $e");
+      TLoaders.errorSnackBar(
+        title: "Error",
+        message: "Failed to update icon label: ${e.toString()}",
+      );
+    } finally {
+      editingLabel.value = '';
+      selectedIconPath.value = '';
     }
   }
 

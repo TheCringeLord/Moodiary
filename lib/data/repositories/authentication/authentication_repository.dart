@@ -48,32 +48,30 @@ class AuthenticationRepository extends GetxController {
   ///* Function to Show Relevant Screen
   Future<void> screenRedirect() async {
     final user = _auth.currentUser;
-    print('🔔 screenRedirect() called');
-    print('🔹 currentUser: $user');
+ 
 
     if (user != null) {
-      print('🔹 user.emailVerified: ${user.emailVerified}');
+      
       if (user.emailVerified) {
-        print('➡️ Email verified → NavigationMenu');
+     
         Get.offAll(() => const NavigationMenu());
       } else {
-        print(
-            '➡️ Email not verified → VerifyEmailScreen(email: ${user.email})');
+   
         Get.offAll(() => VerifyEmailScreen(email: user.email));
       }
     } else {
       // read (or default) the flag
       final isFirstTime = await deviceStorage.read('isFirstTime') ?? true;
-      print('  isFirstTime before: $isFirstTime');
+   
 
       if (isFirstTime) {
         // first time → show onboarding, then mark as done
-        print('➡️ Showing Onboarding');
+   
         await deviceStorage.write('isFirstTime', false);
         Get.offAll(() => const OnboardingScreen());
       } else {
         // not first time → go to login
-        print('➡️ Showing Login');
+      
         Get.offAll(() => const LoginScreen());
       }
     }

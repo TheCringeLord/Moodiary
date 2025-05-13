@@ -163,9 +163,7 @@ class RecordingBlockRepository extends GetxController {
       batch.set(ref, block.toMap());
     }
     await batch.commit();
-    print("========================================");
-    print("✅ Default recording blocks created for user $_userId");
-    print("========================================");
+
   }
 
   ///* Generate default block templates

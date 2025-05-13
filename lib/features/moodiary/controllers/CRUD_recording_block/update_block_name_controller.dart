@@ -33,10 +33,7 @@ class UpdateBlockNameController extends GetxController {
         "Updating block name...",
         TImages.docerAnimation,
       );
-      print("=========================================");
-      print("Block name: ${blockName.text}");
-      print("Updating block name...");
-      print("=========================================");
+ 
       // 2. Check network
       final isConnected = await NetworkManager.instance.isConnected();
       if (!isConnected) {
@@ -77,10 +74,7 @@ class UpdateBlockNameController extends GetxController {
         message: "Recording block name updated successfully!",
       );
 
-      print("=========================================");
-      print("Block name: ${blockName.text}");
-      print("Block name updated successfully!");
-      print("=========================================");
+
       Get.back();
     } catch (e) {
       TFullScreenLoader.stopLoading();

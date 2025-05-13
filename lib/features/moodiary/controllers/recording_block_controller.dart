@@ -73,19 +73,9 @@ class RecordingBlockController extends GetxController {
         isHidden: false,
       );
 
-      // Add debug print
-      print("========================================");
-      print("Creating block: $displayName");
-
       await RecordingBlockRepository.instance.createBlock(newBlock);
       recordingBlocks.add(newBlock);
-
-      // Verify the block is added
-      print("Current blocks: ${recordingBlocks.length}");
     } catch (e) {
-      // Add detailed error message
-      print("Error creating block: $e");
-      print("========================================");
       TLoaders.errorSnackBar(title: "Error", message: e.toString());
     }
   }

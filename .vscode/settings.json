@@ -1,6 +1,14 @@
 {
   "cmake.ignoreCMakeListsMissing": true,
-  "cSpell.words": ["moodiary", "Moodlog"],
+  "cSpell.words": [
+    "cupertino",
+    "docer",
+    "firestore",
+    "iconsax",
+    "moodiary",
+    "Moodlog",
+    "readmore"
+  ],
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#ab307e",
     "activityBar.background": "#ab307e",

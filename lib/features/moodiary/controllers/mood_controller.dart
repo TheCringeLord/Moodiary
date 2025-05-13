@@ -135,11 +135,7 @@ class MoodController extends GetxController {
         photos: [],
       );
 
-      print("==========================");
-      print("Mood ID: ${mood.id}");
-      print("Main Mood: ${mood.mainMood}");
-      print("Sleep Time: ${mood.sleepStart} - ${mood.sleepEnd}");
-      print("==========================");
+ 
 
       // Save to Firestore
       await MoodRepository.instance.createMood(mood);

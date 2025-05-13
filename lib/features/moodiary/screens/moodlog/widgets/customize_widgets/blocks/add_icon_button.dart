@@ -38,6 +38,7 @@ class TAddIconButton extends StatelessWidget {
 
             showModalBottomSheet(
               backgroundColor: dark ? TColors.dark : TColors.white,
+              // ignore: use_build_context_synchronously
               context: context,
               isScrollControlled: true,
               shape: const RoundedRectangleBorder(
@@ -72,7 +73,7 @@ class TAddIconButton extends StatelessWidget {
             width: 48,
             height: 48,
             radius: 24,
-            backgroundColor: TColors.primary.withOpacity(0.1),
+            backgroundColor: TColors.primary.withAlpha(100),
             child: const Icon(Iconsax.add, color: TColors.primary),
           ),
           const SizedBox(height: TSizes.xs),
