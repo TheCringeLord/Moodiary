@@ -45,14 +45,21 @@ dependencies:
   table_calendar: ^3.2.0
   month_picker_dialog: ^6.0.2
   fl_chart: ^0.71.0
+  cached_network_image: ^3.4.1
 
   #--------------- ./ PACKAGES END ------------------#
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.3
 
   flutter_lints: ^5.0.0
+
+flutter_icons:
+  image_path: "assets/logos/app_logo_light.png"
+  android: true
+  ios: true
 
 flutter:
   uses-material-design: true

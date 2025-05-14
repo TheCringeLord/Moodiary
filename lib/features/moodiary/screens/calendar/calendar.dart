@@ -45,6 +45,8 @@ class CalendarScreen extends StatelessWidget {
                 image: userController.user.value.profilePicture.isEmpty
                     ? TImages.neutralExpression
                     : userController.user.value.profilePicture,
+                isNetworkImage: THelperFunctions.isNetworkImage(
+                    userController.user.value.profilePicture),
                 backgroundColor: THelperFunctions.isDarkMode(context)
                     ? TColors.textPrimary
                     : TColors.white,

@@ -56,6 +56,8 @@ class ProfileScreen extends StatelessWidget {
                       image: controller.user.value.profilePicture.isEmpty
                           ? TImages.neutralExpression
                           : controller.user.value.profilePicture,
+                      isNetworkImage: THelperFunctions.isNetworkImage(
+                          controller.user.value.profilePicture),
                       backgroundColor: THelperFunctions.isDarkMode(context)
                           ? TColors.textPrimary
                           : TColors.light,

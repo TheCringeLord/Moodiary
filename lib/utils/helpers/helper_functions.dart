@@ -58,6 +58,12 @@ class THelperFunctions {
     }
   }
 
+  // In helper_functions.dart
+  static bool isNetworkImage(String? path) {
+    if (path == null || path.isEmpty) return false;
+    return path.startsWith('http://') || path.startsWith('https://');
+  }
+
   static void showSnackBar(String message) {
     ScaffoldMessenger.of(Get.context!).showSnackBar(
       SnackBar(content: Text(message)),

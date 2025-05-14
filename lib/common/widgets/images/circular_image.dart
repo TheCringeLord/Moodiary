@@ -1,7 +1,8 @@
-
 import 'package:flutter/material.dart';
-
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:moodiary/utils/loaders/shimmer_effect.dart';
 import '../../../utils/constants/colors.dart';
+import '../../../utils/constants/image_strings.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../../utils/helpers/helper_functions.dart';
 
@@ -16,6 +17,8 @@ class TCircularImage extends StatelessWidget {
     this.width = 56,
     this.height = 56,
     this.padding = TSizes.sm,
+    this.errorWidget, 
+    this.placeholderWidget, 
   });
 
   final BoxFit? fit;
@@ -24,13 +27,15 @@ class TCircularImage extends StatelessWidget {
   final Color? overlayColor;
   final Color? backgroundColor;
   final double width, height, padding;
+  final Widget Function(BuildContext, String, dynamic)? errorWidget;
+  final Widget Function(BuildContext, String)? placeholderWidget;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: width,
       height: height,
-      padding: EdgeInsets.all(padding),
+      padding: isNetworkImage ? EdgeInsets.zero : EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: backgroundColor ??
             (THelperFunctions.isDarkMode(context)
@@ -39,12 +44,31 @@ class TCircularImage extends StatelessWidget {
         borderRadius: BorderRadius.circular(100),
       ),
       child: Center(
-        child: Image(
-          fit: fit,
-          image: isNetworkImage
-              ? NetworkImage(image)
-              : AssetImage(image) as ImageProvider,
-          color: overlayColor,
+        child: ClipRRect(
+          // Add ClipRRect to make the image circular
+          borderRadius: BorderRadius.circular(100),
+          child: isNetworkImage
+              ? CachedNetworkImage(
+                  imageUrl: image,
+                  fit: fit,
+                  color: overlayColor,
+                  placeholder: placeholderWidget ??
+                      (context, url) => TShimmerEffect(
+                            width: width,
+                            height: height,
+                          ),
+                  errorWidget: errorWidget ??
+                      (context, url, error) => Image.asset(
+                            TImages.colleague,
+                            fit: fit,
+                            color: overlayColor,
+                          ),
+                )
+              : Image(
+                  fit: fit,
+                  image: AssetImage(image),
+                  color: overlayColor,
+                ),
         ),
       ),
     );
