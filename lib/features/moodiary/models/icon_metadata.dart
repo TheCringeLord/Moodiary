@@ -53,7 +53,15 @@ String iconCategoryToString(IconCategory category) {
       return 'Productivity';
     case IconCategory.expression:
       return 'Expression';
+    case IconCategory.chores:
+      return 'Chores';
+    case IconCategory.relationship:
+      return 'Relationship';
+    case IconCategory.hobbies:
+      return 'Hobbies';
+    case IconCategory.work:
+      return 'Work';
+    case IconCategory.other:
+      return 'Other';
   }
 }
-
-

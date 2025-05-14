@@ -163,12 +163,10 @@ class RecordingBlockRepository extends GetxController {
       batch.set(ref, block.toMap());
     }
     await batch.commit();
-
   }
 
   ///* Generate default block templates
   List<RecordingBlockModel> _generateDefaultBlocks() {
-    final String iconPlaceholder = TImages.google;
     return [
       ///* Special blocks
       RecordingBlockModel(
@@ -187,6 +185,16 @@ class RecordingBlockRepository extends GetxController {
       ),
 
       ///* Regular blocks
+      //! emotions;
+      //! activities;
+      //! people;
+      //! weather;
+      //! hobbies;
+      //! work;
+      //! health;
+      //! chores;
+      //! relationship;
+
       RecordingBlockModel(
         id: 'emotions',
         displayName: 'Emotions',
@@ -278,38 +286,40 @@ class RecordingBlockRepository extends GetxController {
         isCustom: false,
         isHidden: false,
       ),
+
       RecordingBlockModel(
         id: 'people',
         displayName: 'People',
         icons: [
           RecordingIconModel(
-            id: 'friends',
-            label: 'Friends',
-            iconPath: iconPlaceholder,
+            id: 'colleague',
+            label: 'Colleague',
+            iconPath: TImages.colleague,
             isCustom: false,
           ),
           RecordingIconModel(
             id: 'family',
             label: 'Family',
-            iconPath: iconPlaceholder,
+            iconPath: TImages.family,
             isCustom: false,
           ),
           RecordingIconModel(
-            id: 'partner',
-            label: 'Partner',
-            iconPath: iconPlaceholder,
+            id: 'friends',
+            label: 'Friends',
+            iconPath: TImages.friends,
             isCustom: false,
           ),
           RecordingIconModel(
-            id: 'coworkers',
-            label: 'Coworkers',
-            iconPath: iconPlaceholder,
+            id: 'romance',
+            label: 'Romance',
+            iconPath: TImages.romance,
             isCustom: false,
           ),
         ],
         isCustom: false,
         isHidden: false,
       ),
+
       RecordingBlockModel(
         id: 'weather',
         displayName: 'Weather',
@@ -368,32 +378,39 @@ class RecordingBlockRepository extends GetxController {
         isCustom: false,
         isHidden: false,
       ),
+
       RecordingBlockModel(
         id: 'health',
         displayName: 'Health',
         icons: [
           RecordingIconModel(
-            id: 'sick',
-            label: 'Sick',
-            iconPath: iconPlaceholder,
-            isCustom: false,
-          ),
-          RecordingIconModel(
-            id: 'tired',
-            label: 'Tired',
-            iconPath: iconPlaceholder,
-            isCustom: false,
-          ),
-          RecordingIconModel(
             id: 'energetic',
             label: 'Energetic',
-            iconPath: iconPlaceholder,
+            iconPath: TImages.energyDrink,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'fever',
+            label: 'Fever',
+            iconPath: TImages.fever,
             isCustom: false,
           ),
           RecordingIconModel(
             id: 'headache',
             label: 'Headache',
-            iconPath: iconPlaceholder,
+            iconPath: TImages.headache,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'healthy',
+            label: 'Healthy',
+            iconPath: TImages.healthy,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'sleeping_in_bed',
+            label: 'Sleeping in Bed',
+            iconPath: TImages.sleepingInBed,
             isCustom: false,
           ),
         ],
@@ -402,25 +419,214 @@ class RecordingBlockRepository extends GetxController {
       ),
 
       RecordingBlockModel(
-        id: 'productivity',
-        displayName: 'Productivity',
+        id: 'hobbies',
+        displayName: 'Hobbies',
         icons: [
           RecordingIconModel(
-            id: 'focused',
-            label: 'Focused',
-            iconPath: iconPlaceholder,
+            id: 'theater',
+            label: 'Theater',
+            iconPath: TImages.theater,
             isCustom: false,
           ),
           RecordingIconModel(
-            id: 'lazy',
-            label: 'Lazy',
-            iconPath: iconPlaceholder,
+            id: 'drinks',
+            label: 'Drinks',
+            iconPath: TImages.drinks,
             isCustom: false,
           ),
           RecordingIconModel(
-            id: 'overworked',
-            label: 'Overworked',
-            iconPath: iconPlaceholder,
+            id: 'drawing',
+            label: 'Drawing',
+            iconPath: TImages.drawing,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'movies',
+            label: 'Movies',
+            iconPath: TImages.movies,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'music',
+            label: 'Music',
+            iconPath: TImages.music,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'exercise',
+            label: 'Exercise',
+            iconPath: TImages.exercise,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'gardening',
+            label: 'Gardening',
+            iconPath: TImages.gardening,
+            isCustom: false,
+          ),
+        ],
+        isCustom: false,
+        isHidden: false,
+      ),
+
+      RecordingBlockModel(
+        id: 'work',
+        displayName: 'Work',
+        icons: [
+          RecordingIconModel(
+            id: 'briefcase',
+            label: 'Work',
+            iconPath: TImages.briefcase,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'group',
+            label: 'Group',
+            iconPath: TImages.group,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'computer',
+            label: 'Computer',
+            iconPath: TImages.computer,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'new_job',
+            label: 'New Job',
+            iconPath: TImages.newJob,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'teamwork',
+            label: 'Teamwork',
+            iconPath: TImages.teamwork,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'resume',
+            label: 'Resume',
+            iconPath: TImages.resume,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'work_from_home',
+            label: 'Work From Home',
+            iconPath: TImages.homeOffice,
+            isCustom: false,
+          ),
+        ],
+        isCustom: false,
+        isHidden: false,
+      ),
+
+      RecordingBlockModel(
+        id: 'chores',
+        displayName: 'Chores',
+        icons: [
+          RecordingIconModel(
+            id: 'clean_sparkle',
+            label: 'Clean Sparkle',
+            iconPath: TImages.cleanSparkle,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'clean_broom',
+            label: 'Clean Broom',
+            iconPath: TImages.cleanBroom,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'dirty_clothes',
+            label: 'Dirty Clothes',
+            iconPath: TImages.dirtyClothes,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'family_clothes',
+            label: 'Family Clothes',
+            iconPath: TImages.familyClothes,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'hand_wash',
+            label: 'Hand Wash',
+            iconPath: TImages.handWash,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'housekeeping',
+            label: 'Housekeeping',
+            iconPath: TImages.housekeeping,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'iron',
+            label: 'Iron',
+            iconPath: TImages.iron,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'laundry_bucket',
+            label: 'Laundry Bucket',
+            iconPath: TImages.laundryBucket,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'washing_machine',
+            label: 'Washing Machine',
+            iconPath: TImages.washingMachine,
+            isCustom: false,
+          ),
+        ],
+        isCustom: false,
+        isHidden: false,
+      ),
+
+      RecordingBlockModel(
+        id: 'relationship',
+        displayName: 'Relationship',
+        icons: [
+          RecordingIconModel(
+            id: 'couple',
+            label: 'Couple',
+            iconPath: TImages.couple,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'gift',
+            label: 'Gift',
+            iconPath: TImages.gift,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'important_event',
+            label: 'Important Event',
+            iconPath: TImages.importantEvent,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'in_love',
+            label: 'In Love',
+            iconPath: TImages.inLove,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'melting_heart',
+            label: 'Melting Heart',
+            iconPath: TImages.meltingHeart,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'relationship',
+            label: 'Relationship',
+            iconPath: TImages.relationshipIcon,
+            isCustom: false,
+          ),
+          RecordingIconModel(
+            id: 'trust',
+            label: 'Trust',
+            iconPath: TImages.trust,
             isCustom: false,
           ),
         ],

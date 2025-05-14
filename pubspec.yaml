@@ -66,6 +66,12 @@ flutter:
     - assets/icons/packs/activity/
     - assets/icons/packs/weather/
     - assets/icons/packs/expression/
+    - assets/icons/packs/chores/
+    - assets/icons/packs/health/
+    - assets/icons/packs/hobbies/
+    - assets/icons/packs/people/
+    - assets/icons/packs/relationship/
+    - assets/icons/packs/work/
     - assets/images/animations/
 
   #--------------- LOCAL FONTS ------------------#

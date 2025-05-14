@@ -29,6 +29,7 @@ class TPredefinedIconPicker extends StatelessWidget {
               ),
               const SizedBox(height: TSizes.spaceBtwSections),
               TTabBar(
+                isScrollable: true,
                 backgroundColor: TColors.white,
                 tabs: categories.map((c) {
                   return Tab(text: iconCategoryToString(c));
@@ -38,6 +39,7 @@ class TPredefinedIconPicker extends StatelessWidget {
               // Expand TabBarView to fill available space
               Expanded(
                 child: TabBarView(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   children: categories.map((category) {
                     final icons = getIconsByCategory(category);
                     return GridView.builder(

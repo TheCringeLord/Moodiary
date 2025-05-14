@@ -80,7 +80,87 @@ class TImages {
   static const String smile =
       "assets/icons/packs/expression/icons8-smiling-face-with-heart-100.png";
 
-  // -- Animations
+  // -- Chores Icons
+  static const String cleanSparkle =
+      'assets/icons/packs/chores/icons8-clean-100 (1).png';
+  static const String cleanBroom =
+      'assets/icons/packs/chores/icons8-clean-100.png';
+  static const String dirtyClothes =
+      'assets/icons/packs/chores/icons8-dirty-clothes-100.png';
+  static const String familyClothes =
+      'assets/icons/packs/chores/icons8-family-clothes-100.png';
+  static const String handWash =
+      'assets/icons/packs/chores/icons8-hand-wash-100.png';
+  static const String housekeeping =
+      'assets/icons/packs/chores/icons8-housekeeping-100.png';
+  static const String iron = 'assets/icons/packs/chores/icons8-iron-100.png';
+  static const String laundryBucket =
+      'assets/icons/packs/chores/icons8-hand-wash-100.png';
+  static const String washingMachine =
+      'assets/icons/packs/chores/icons8-laundry-100.png';
+
+  // -- Relationship Icons
+  static const String couple =
+      'assets/icons/packs/relationship/icons8-couple-100.png';
+  static const String gift =
+      'assets/icons/packs/relationship/icons8-gift-100.png';
+  static const String importantEvent =
+      'assets/icons/packs/relationship/icons8-important-event-100.png';
+  static const String inLove =
+      'assets/icons/packs/relationship/icons8-in-love-100.png';
+  static const String meltingHeart =
+      'assets/icons/packs/relationship/icons8-melting-heart-100.png';
+  static const String relationshipIcon =
+      'assets/icons/packs/relationship/icons8-relationship-100.png';
+  static const String trust =
+      'assets/icons/packs/relationship/icons8-trust-100.png';
+
+  // -- Health Icons
+  static const String energyDrink =
+      'assets/icons/packs/health/icons8-energy-drink-100.png';
+  static const String fever = 'assets/icons/packs/health/icons8-fever-100.png';
+  static const String headache =
+      'assets/icons/packs/health/icons8-headache-100.png';
+  static const String healthy =
+      'assets/icons/packs/health/icons8-healthy-100.png';
+  static const String sleepingInBed =
+      'assets/icons/packs/health/icons8-sleeping-in-bed-100.png';
+
+  // -- Hobbies Icons
+  static const String theater =
+      'assets/icons/packs/hobbies/icons8-3d-glasses-100.png';
+  static const String drinks =
+      'assets/icons/packs/hobbies/icons8-cocktail-100.png';
+  static const String drawing =
+      'assets/icons/packs/hobbies/icons8-drawing-100.png';
+  static const String movies =
+      'assets/icons/packs/hobbies/icons8-movie-ticket-100.png';
+  static const String music = 'assets/icons/packs/hobbies/icons8-music-100.png';
+  static const String exercise =
+      'assets/icons/packs/hobbies/icons8-run-100.png';
+  static const String gardening =
+      'assets/icons/packs/hobbies/icons8-tree-planting-100.png';
+
+  // -- People Icons
+  static const String colleague =
+      'assets/icons/packs/people/icons8-collaborator-male-100.png';
+  static const String family =
+      'assets/icons/packs/people/icons8-family-100.png';
+  static const String friends =
+      'assets/icons/packs/people/icons8-friends-100.png';
+  static const String romance =
+      'assets/icons/packs/people/icons8-romance-100.png';
+  // -- Work Icons
+  static const String briefcase = 'assets/icons/packs/work/icons8-work-100.png';
+  static const String group = 'assets/icons/packs/work/icons8-crowd-100.png';
+  static const String computer =
+      'assets/icons/packs/work/icons8-monitor-100.png';
+  static const String newJob = 'assets/icons/packs/work/icons8-new-job-100.png';
+  static const String teamwork =
+      'assets/icons/packs/work/icons8-people-working-together-100.png';
+  static const String resume = 'assets/icons/packs/work/icons8-resume-100.png';
+  static const String homeOffice =
+      'assets/icons/packs/work/icons8-work-from-home-100.png';
 
 // -- Lottie Animations
   static const String cartAnimation =

@@ -9,10 +9,11 @@ class TTabBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.tabs,
     this.backgroundColor = TColors.light,
+    this.isScrollable = false,
   });
   final List<Widget> tabs;
   final Color? backgroundColor;
-
+  final bool isScrollable;
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
@@ -20,13 +21,12 @@ class TTabBar extends StatelessWidget implements PreferredSizeWidget {
       color: dark ? TColors.dark : backgroundColor,
       child: TabBar(
         tabs: tabs,
-        isScrollable: false,
-        labelPadding: EdgeInsets.zero,
+        isScrollable: isScrollable,
         indicatorWeight: 1,
         indicatorColor: TColors.primary,
         unselectedLabelColor: TColors.darkerGrey,
         labelColor: dark ? TColors.white : TColors.primary,
-        tabAlignment: TabAlignment.fill,
+        // tabAlignment: TabAlignment.fill,
         dividerColor: Colors.transparent,
       ),
     );

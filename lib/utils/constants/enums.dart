@@ -14,4 +14,9 @@ enum IconCategory {
   activities,
   health,
   productivity,
+  chores,
+  relationship,
+  hobbies,
+  work,
+  other,
 }
