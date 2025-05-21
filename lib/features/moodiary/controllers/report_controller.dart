@@ -206,6 +206,10 @@ class ReportController extends GetxController {
   ///!------------------------------------- Annual Report -------------------------------------!///
   final RxList<MoodModel> annualMoods = <MoodModel>[].obs;
   final RxList<FlSpot> annualSpots = <FlSpot>[].obs;
+
+  // month → list of tied top moods (e.g. [4,3])
+  final RxMap<int, List<int>> modeTies = <int, List<int>>{}.obs;
+
   // Add a selected year observable
   final selectedYear = DateTime.now().year.obs;
 
@@ -231,24 +235,48 @@ class ReportController extends GetxController {
 
     annualMoods.assignAll(annualMoodList);
 
-    // Generate monthly average mood spots for line chart
-    final monthlyAverages = <FlSpot>[];
-    for (int month = 1; month <= 12; month++) {
+    // Build “mode” per month instead of average
+    final modeSpots = <FlSpot>[];
+    final tieMap = <int, List<int>>{};
+
+    for (int m = 1; m <= 12; m++) {
       final monthMoods =
-          annualMoodList.where((m) => m.date.month == month).toList();
-      if (monthMoods.isNotEmpty) {
-        final avgScore =
-            monthMoods.map((m) => m.moodScore).reduce((a, b) => a + b) /
-                monthMoods.length;
-        monthlyAverages.add(FlSpot(month.toDouble(), avgScore));
+          annualMoodList.where((x) => x.date.month == m).toList();
+      if (monthMoods.isEmpty) continue;
+
+      // count frequency
+      final counts = <int, int>{};
+      for (final e in monthMoods) {
+        counts[e.moodScore] = (counts[e.moodScore] ?? 0) + 1;
       }
+
+      final maxCount = counts.values.reduce((a, b) => a > b ? a : b);
+      final topScores = counts.entries
+          .where((e) => e.value == maxCount)
+          .map((e) => e.key)
+          .toList();
+
+      // pick last‐recorded among ties
+      MoodModel last = monthMoods.first;
+      for (final x in monthMoods) {
+        if (topScores.contains(x.moodScore) && x.date.isAfter(last.date)) {
+          last = x;
+        }
+      }
+
+      modeSpots.add(FlSpot(m.toDouble(), last.moodScore.toDouble()));
+      tieMap[m] = topScores;
     }
 
-    // Store in annualSpots instead of spots for annual view
-    annualSpots.clear();
-    annualSpots.assignAll(monthlyAverages);
+    annualSpots
+      ..clear()
+      ..addAll(modeSpots);
 
-    // Calculate average sleep times for the year
+    modeTies
+      ..clear()
+      ..addAll(tieMap);
+
+    // Recalc sleep times as before
     calculateAverageSleepTimes(annualMoodList);
   }
 

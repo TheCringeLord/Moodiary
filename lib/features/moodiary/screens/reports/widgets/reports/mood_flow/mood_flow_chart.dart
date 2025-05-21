@@ -11,9 +11,9 @@ class TMoodFlowChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = ReportController.instance;
+    final ctrl = ReportController.instance;
     final dark = THelperFunctions.isDarkMode(context);
-    final isAnnualView = DefaultTabController.of(context).index == 1;
+    final isAnnual = DefaultTabController.of(context).index == 1;
 
     // Different color schemes for mood dots
     final moodColors = {
@@ -33,18 +33,15 @@ class TMoodFlowChart extends StatelessWidget {
     };
 
     return Obx(() {
-      // Use annual data when in annual view
-      final moodSpots = isAnnualView
-          ? controller.annualSpots // Monthly averages for annual view
-          : controller.spots;
+      final spots = isAnnual ? ctrl.annualSpots : ctrl.spots;
+      final maxX = isAnnual
+          ? 12.0
+          : DateUtils.getDaysInMonth(
+              ctrl.selectedMonth.value.year,
+              ctrl.selectedMonth.value.month,
+            ).toDouble();
 
-      // Calculate display parameters based on context
-      final xAxisMax = isAnnualView
-          ? 12.0 // 12 months for annual view
-          : DateUtils.getDaysInMonth(controller.selectedMonth.value.year,
-              controller.selectedMonth.value.month);
-
-      if (moodSpots.isEmpty) {
+      if (spots.isEmpty) {
         return Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -58,8 +55,8 @@ class TMoodFlowChart extends StatelessWidget {
         height: 240,
         child: LineChart(
           LineChartData(
-            minX: isAnnualView ? 1 : 1,
-            maxX: xAxisMax.toDouble(),
+            minX: isAnnual ? 1 : 1,
+            maxX: maxX,
             minY: 0.5,
             maxY: 5.5,
             clipData: const FlClipData.none(),
@@ -67,7 +64,7 @@ class TMoodFlowChart extends StatelessWidget {
               show: true,
               drawVerticalLine: true,
               drawHorizontalLine: false,
-              verticalInterval: isAnnualView ? 1 : 5,
+              verticalInterval: isAnnual ? 1 : 5,
               getDrawingVerticalLine: (value) => FlLine(
                 color: dark
                     ? TColors.textSecondary.withAlpha(120)
@@ -85,7 +82,7 @@ class TMoodFlowChart extends StatelessWidget {
                   getTitlesWidget: (value, _) {
                     final int xValue = value.toInt();
 
-                    if (isAnnualView) {
+                    if (isAnnual) {
                       // For annual view, show month names
                       if (xValue >= 1 && xValue <= 12) {
                         return Padding(
@@ -105,12 +102,12 @@ class TMoodFlowChart extends StatelessWidget {
                       final baseTicks = [1, 6, 11, 16, 21];
                       final ticks = [
                         ...baseTicks,
-                        if (xAxisMax >= 30) 26,
-                        xAxisMax.toInt(),
+                        if (maxX >= 30) 26,
+                        maxX.toInt(),
                       ];
 
                       if (ticks.contains(day)) {
-                        final month = controller.selectedMonth.value.month;
+                        final month = ctrl.selectedMonth.value.month;
                         return Padding(
                           padding: const EdgeInsets.only(top: 6, right: 15),
                           child: Center(
@@ -140,13 +137,14 @@ class TMoodFlowChart extends StatelessWidget {
                   },
                 ),
               ),
-              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              topTitles:
+                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               rightTitles:
                   const AxisTitles(sideTitles: SideTitles(showTitles: false)),
             ),
             lineBarsData: [
               LineChartBarData(
-                spots: moodSpots,
+                spots: spots,
                 isCurved: true,
                 color: dark
                     ? const Color.fromARGB(255, 44, 221, 192)
@@ -172,6 +170,58 @@ class TMoodFlowChart extends StatelessWidget {
                 ),
               ),
             ],
+            lineTouchData: LineTouchData(
+              handleBuiltInTouches: true,
+              touchTooltipData: LineTouchTooltipData(
+                getTooltipColor: (touchedSpot) =>
+                    dark ? TColors.dark : Colors.white,
+                getTooltipItems: (touched) {
+                  return touched.map((t) {
+                    final x = t.x.toInt();
+                    final y = t.y.toInt();
+                    if (isAnnual) {
+                      final tied = ctrl.modeTies[x] ?? [y];
+                      // map score → label
+                      String label(int s) {
+                        switch (s) {
+                          case 5:
+                            return "Very Happy";
+                          case 4:
+                            return "Happy";
+                          case 3:
+                            return "Neutral";
+                          case 2:
+                            return "Unhappy";
+                          case 1:
+                            return "Sad";
+                          default:
+                            return "$s";
+                        }
+                      }
+
+                      final text = tied.map(label).join(" & ");
+                      return LineTooltipItem(text,
+                          TextStyle(color: dark ? Colors.white : Colors.black));
+                    } else {
+                      // monthly: show day and mood
+                      final day = x;
+                      final month = ctrl.selectedMonth.value.month;
+                      final moodLabel = {
+                        5: "Very Happy",
+                        4: "Happy",
+                        3: "Neutral",
+                        2: "Unhappy",
+                        1: "Sad",
+                      }[y]!;
+                      return LineTooltipItem(
+                        "$month/$day\n$moodLabel",
+                        TextStyle(color: dark ? Colors.white : Colors.black),
+                      );
+                    }
+                  }).toList();
+                },
+              ),
+            ),
           ),
         ),
       );
