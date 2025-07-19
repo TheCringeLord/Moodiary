@@ -1,36 +1,42 @@
 <!-- README for Moodiary -->
-# 📝 Moodiary  
-Personal Mood Tracker App — Built with Flutter & Firebase  
+
+# 📝 Moodiary
+
+Personal Mood Tracker App — Built with Flutter & Firebase
 
 ---
 
-## 📱 About  
+## 📱 About
+
 **Moodiary** is a minimalist daily mood tracking application inspired by popular apps like Daylio and DailyBean. It helps users visualize emotional patterns through calendar logs, charts, and reports, offering insights into mental well-being over time.
 
 ---
 
-## ✨ Key Features  
-- 📅 **Mood Calendar** — Log daily moods with icons and custom notes.  
-- 📊 **Mood Flow Reports** — Visualize trends monthly and yearly via charts.  
-- 📈 **Statistics & Analytics** — Frequent moods, best/worst days, icons breakdown.  
-- 🎨 **Custom Recording Blocks** — Personalize activities (sleep, work, exercise).  
-- 🔔 **Reminders & Notifications** — Encourage consistent journaling.  
-- ☁️ **Firebase Integration** — Realtime cloud sync, authentication, and Firestore storage.  
+## ✨ Key Features
+
+- 📅 **Mood Calendar** — Log daily moods with icons and custom notes.
+- 📊 **Mood Flow Reports** — Visualize trends monthly and yearly via charts.
+- 📈 **Statistics & Analytics** — Frequent moods, best/worst days, icons breakdown.
+- 🎨 **Custom Recording Blocks** — Personalize activities (sleep, work, exercise).
+- 🔔 **Reminders & Notifications** — Encourage consistent journaling.
+- ☁️ **Firebase Integration** — Realtime cloud sync, authentication, and Firestore storage.
 
 ---
 
-## 🛠️ Tech Stack  
-| Technology | Usage                        |
-|------------|------------------------------|
-| Flutter    | Frontend UI                  |
-| Firebase   | Backend (Auth, Firestore)    |
-| GetX       | State Management & Routing   |
-| FL Chart   | Data Visualization           |
-| Hive       | Local Storage (optional)     |
+## 🛠️ Tech Stack
+
+| Technology | Usage                      |
+| ---------- | -------------------------- |
+| Flutter    | Frontend UI                |
+| Firebase   | Backend (Auth, Firestore)  |
+| GetX       | State Management & Routing |
+| FL Chart   | Data Visualization         |
+| Hive       | Local Storage (optional)   |
 
 ---
 
-## 📂 Project Structure (Simplified)  
+## 📂 Project Structure (Simplified)
+
 ```
 lib/
 ├── features/
@@ -48,14 +54,16 @@ lib/
 
 ---
 
-## 🚀 Getting Started  
+## 🚀 Getting Started
 
-### Prerequisites  
-- Flutter SDK (stable)  
-- Dart SDK  
-- Firebase project with Firestore & Auth enabled  
+### Prerequisites
 
-### Installation  
+- Flutter SDK (stable)
+- Dart SDK
+- Firebase project with Firestore & Auth enabled
+
+### Installation
+
 ```bash
 git clone https://github.com/TheCringeLord/Moodiary.git
 cd Moodiary
@@ -66,8 +74,10 @@ flutter run
 
 ---
 
-## 🔑 Environment Setup  
+## 🔑 Environment Setup
+
 Configure Firebase in `firebase_options.dart` or via environment variables:
+
 ```
 API_KEY=your_firebase_api_key
 APP_ID=your_firebase_app_id
@@ -76,33 +86,29 @@ PROJECT_ID=your_firebase_project_id
 
 ---
 
-## 📸 Screenshots  
-| Home | Record Mood | Report |
-|:----:|:-----------:|:------:|
+## 📸 Screenshots
+
+|              Home               |              Record Mood               |              Report               |
+| :-----------------------------: | :------------------------------------: | :-------------------------------: |
 | ![](assets/screenshot/Home.png) | ![](assets/screenshot/Record-Mood.png) | ![](assets/screenshot/Report.png) |
 
 ---
 
-## 📌 Roadmap  
-- [x] Daily Mood Logging  
-- [x] Calendar View  
-- [x] Monthly & Annual Reports  
-- [x] Custom Recording Blocks  
-- [ ] Dark / Light Theme  
-- [ ] Data Export (CSV)  
+## 📌 Roadmap
 
----
+- [x] Daily Mood Logging
+- [x] Calendar View
+- [x] Monthly & Annual Reports
+- [x] Custom Recording Blocks
+- [ ] Dark / Light Theme
 
-## 🧑‍💻 Contributing  
-Pull requests are welcome. Please follow conventional commits and include clear descriptions.
+## 📄 License
 
----
-
-## 📄 License  
 [MIT License](LICENSE)
 
 ---
 
-## 🙏 Acknowledgements  
+## 🙏 Acknowledgements
+
 Inspired by **Daylio** and **DailyBean**.  
-Thanks to the Flutter & Firebase communities for their support.  
+Thanks to the Flutter & Firebase communities for their support.
