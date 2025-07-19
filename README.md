@@ -104,10 +104,6 @@ PROJECT_ID=your_firebase_project_id
 - [x] Custom Recording Blocks
 
 
-## 📄 License
-
-[MIT License](LICENSE)
-
 ---
 
 ## 🙏 Acknowledgements
