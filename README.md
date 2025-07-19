@@ -10,6 +10,8 @@ Personal Mood Tracker App — Built with Flutter & Firebase
 
 **Moodiary** is a minimalist daily mood tracking application inspired by popular apps like Daylio and DailyBean. It helps users visualize emotional patterns through calendar logs, charts, and reports, offering insights into mental well-being over time.
 
+This project was developed as part of my university coursework at King Mongkut's University of Technology Thonburi (KMUTT), following Agile methodologies.
+
 ---
 
 ## ✨ Key Features
