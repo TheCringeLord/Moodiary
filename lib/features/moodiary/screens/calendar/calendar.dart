@@ -101,7 +101,7 @@ class CalendarScreen extends StatelessWidget {
 
               ///* Calendar Grid
               const SizedBox(
-                height: 500,
+                height: 400,
                 child: TCalendarGridView(),
               ),
 
