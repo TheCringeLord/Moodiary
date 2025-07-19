@@ -1,62 +1,64 @@
-
+<!-- README for Moodiary -->
 # 📝 Moodiary  
-Your Personal Mood Tracker App — Built with Flutter & Firebase  
-
-![Moodiary Banner](assets/banner.png) <!-- optional banner image -->  
+Personal Mood Tracker App — Built with Flutter & Firebase  
 
 ---
 
 ## 📱 About  
-**Moodiary** is a minimalist, daily mood tracking application inspired by popular apps like **Daylio** and **DailyBean**. It helps users visualize emotional patterns through **calendar logs**, **charts**, and **reports**, offering insights into mental well-being over time.  
+**Moodiary** is a minimalist daily mood tracking application inspired by popular apps like Daylio and DailyBean. It helps users visualize emotional patterns through calendar logs, charts, and reports, offering insights into mental well-being over time.
 
 ---
 
 ## ✨ Key Features  
-- 📅 **Mood Calendar** — Log daily moods with icons & custom notes.  
+- 📅 **Mood Calendar** — Log daily moods with icons and custom notes.  
 - 📊 **Mood Flow Reports** — Visualize trends monthly and yearly via charts.  
 - 📈 **Statistics & Analytics** — Frequent moods, best/worst days, icons breakdown.  
 - 🎨 **Custom Recording Blocks** — Personalize activities (sleep, work, exercise).  
 - 🔔 **Reminders & Notifications** — Encourage consistent journaling.  
-- ☁️ **Firebase Integration** — Realtime cloud sync, auth, and Firestore storage.  
+- ☁️ **Firebase Integration** — Realtime cloud sync, authentication, and Firestore storage.  
 
 ---
 
 ## 🛠️ Tech Stack  
-| Technology | Usage       |
-|------------|-------------|
-| Flutter    | Frontend UI |
-| Firebase   | Backend (Auth, Firestore, Storage) |
-| GetX       | State Management, Navigation |
-| FL_Chart   | Data Visualization |
-| Hive       | Local Storage (optional) |
+| Technology | Usage                        |
+|------------|------------------------------|
+| Flutter    | Frontend UI                  |
+| Firebase   | Backend (Auth, Firestore)    |
+| GetX       | State Management & Routing   |
+| FL Chart   | Data Visualization           |
+| Hive       | Local Storage (optional)     |
 
 ---
 
-## 📂 Project Structure (Simplified)
+## 📂 Project Structure (Simplified)  
 ```
 lib/
 ├── features/
 │   └── moodiary/
 │       ├── controllers/
+│       ├── data/
 │       ├── models/
 │       ├── screens/
-│       ├── widgets/
+│       └── widgets/
+├── common/
 ├── utils/
 ├── main.dart
+└── firebase_options.dart
 ```
 
 ---
 
 ## 🚀 Getting Started  
 
-### 1️⃣ Prerequisites  
-- Flutter SDK (Stable)  
-- Firebase Project (Firestore, Auth enabled)  
+### Prerequisites  
+- Flutter SDK (stable)  
+- Dart SDK  
+- Firebase project with Firestore & Auth enabled  
 
-### 2️⃣ Installation  
+### Installation  
 ```bash
-git clone https://github.com/yourusername/moodiary.git
-cd moodiary
+git clone https://github.com/TheCringeLord/Moodiary.git
+cd Moodiary
 flutter pub get
 flutterfire configure
 flutter run
@@ -65,7 +67,7 @@ flutter run
 ---
 
 ## 🔑 Environment Setup  
-Create a `.env` file or configure Firebase directly:
+Configure Firebase in `firebase_options.dart` or via environment variables:
 ```
 API_KEY=your_firebase_api_key
 APP_ID=your_firebase_app_id
@@ -75,36 +77,32 @@ PROJECT_ID=your_firebase_project_id
 ---
 
 ## 📸 Screenshots  
-| Calendar View | Mood Report | Customize Block |
-|:--:|:--:|:--:|
-| ![](assets/calendar.png) | ![](assets/report.png) | ![](assets/customize.png) |
+| Home | Record Mood | Report |
+|:----:|:-----------:|:------:|
+| ![](assets/screenshot/Home.png) | ![](assets/screenshot/Record-Mood.png) | ![](assets/screenshot/Report.png) |
 
 ---
 
 ## 📌 Roadmap  
 - [x] Daily Mood Logging  
 - [x] Calendar View  
-- [x] Annual & Monthly Reports  
+- [x] Monthly & Annual Reports  
 - [x] Custom Recording Blocks  
-- [ ] Cloud Backup (Firestore Sync)  
-- [ ] Dark / Light Themes  
-- [ ] Export Data as CSV  
+- [ ] Dark / Light Theme  
+- [ ] Data Export (CSV)  
 
 ---
 
 ## 🧑‍💻 Contributing  
-Pull requests are welcome. Please follow conventional commits and include clear descriptions.  
+Pull requests are welcome. Please follow conventional commits and include clear descriptions.
 
 ---
 
 ## 📄 License  
-[MIT License](LICENSE)  
+[MIT License](LICENSE)
 
 ---
 
-## 🙌 Acknowledgements  
-Inspired by:  
-- Daylio  
-- DailyBean  
-
-Thanks to the Flutter and Firebase communities for their incredible support.  
+## 🙏 Acknowledgements  
+Inspired by **Daylio** and **DailyBean**.  
+Thanks to the Flutter & Firebase communities for their support.  
