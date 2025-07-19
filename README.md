@@ -97,12 +97,12 @@ PROJECT_ID=your_firebase_project_id
 ---
 
 ## 📌 Roadmap
-
+- [x] Dark / Light Theme
 - [x] Daily Mood Logging
 - [x] Calendar View
 - [x] Monthly & Annual Reports
 - [x] Custom Recording Blocks
-- [ ] Dark / Light Theme
+
 
 ## 📄 License
 
